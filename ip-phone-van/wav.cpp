@@ -39,7 +39,7 @@ void WAV::open(std::string path)
         // read wav header
         fread(p_header,1,sizeof(HEADER),pFile);
 
-        // is is wav file? if not -- throw FILE_BAD_HEADER.
+        // is it wav file? if not -- throw FILE_BAD_HEADER.
         if(strncmp(p_header->chunk_id,"RIFF",4) || strncmp(p_header->format,"WAVE",4))
         {
             throw FILE_BAD_HEADER;
