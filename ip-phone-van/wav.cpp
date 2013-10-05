@@ -3,6 +3,7 @@
 WAV::WAV(std::string path)
 {
     p_header = new HEADER();
+
     try
     {
         this->open(path);
@@ -11,18 +12,27 @@ WAV::WAV(std::string path)
     {
         switch(e)
         {
-            case FILE_MISSING:
-            {
-                printf("wav file is missing\n");
-                break;
-            }
-            case FILE_BAD_HEADER:
-            {
-                printf("it is not wav file\n");
-                break;
-            }
+        case FILE_MISSING:
+        {
+            printf("wav file is missing\n");
+            break;
+        }
+        case FILE_BAD_HEADER:
+        {
+            printf("it is not wav file\n");
+            break;
+        }
         }
     }
+}
+
+std::string WAV::getPath() const
+{
+    return path;
+}
+
+WAV::WAV()
+{
 }
 
 WAV::~WAV()
