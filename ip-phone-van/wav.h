@@ -92,6 +92,7 @@ public:
      */
     HEADER *getHeader();
 
+    WAV();
 private:
     /*
      * @brief Header of WAVE file.

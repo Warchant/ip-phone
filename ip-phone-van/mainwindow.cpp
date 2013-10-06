@@ -5,27 +5,12 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    this->wav = new WAV();
+    this->file = new AudioIO();
 
     ui->setupUi(this);
-    int bps  = wav->getHeader()->WAVE_F.bitsPerSample;
-    int size = wav->getHeader()->WAVE_D.subChunk2Size;
 
-    QVector<double> x(size), y(size);
-    for (int i=0; i<size; i++)
-    {
-        x[i] = double(i)/(size-1);
-        y[i] = double(wav->getData()[i]);
-    }
+    this->plotReplot();
 
-    this->setupPlot();
-    // create graph and assign data to it:
-    ui->customPlot->addGraph();
-    ui->customPlot->graph(0)->setData(x,y);
-    // set axes ranges, so we see all data:
-
-
-    ui->customPlot->replot();
 }
 
 MainWindow::~MainWindow()
@@ -33,7 +18,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::setupPlot()
+void MainWindow::plotSetup()
 {
     ui->customPlot->xAxis->setRange(0,1);
     ui->customPlot->yAxis->setRange(0,255);
@@ -44,6 +29,27 @@ void MainWindow::setupPlot()
     ui->customPlot->yAxis->setVisible(false);
 }
 
+void MainWindow::plotReplot()
+{
+    int size = file->wav_header->getHeader()->WAVE_D.subChunk2Size;
+
+    QVector<double> x(size), y(size);
+    for (int i=0; i<size; i++)
+    {
+        x[i] = double(i)/(size-1);
+        y[i] = double(file->wav_header->getData()[i]);
+    }
+
+    this->plotSetup();
+    // create graph and assign data to it:
+    ui->customPlot->addGraph();
+    ui->customPlot->graph(0)->setData(x,y);
+    // set axes ranges, so we see all data:
+
+
+    ui->customPlot->replot();
+}
+
 void MainWindow::on_action_open_triggered()
 {
     QFileDialog dialog(this);
@@ -51,6 +57,7 @@ void MainWindow::on_action_open_triggered()
     dialog.setNameFilter(tr("WAV files (*.wav)"));
     if(dialog.exec())
     {
-        a.setPath( dialog.selectedFiles().at(0).toStdString() );
+        file->setPath( dialog.selectedFiles().at(0).toStdString() );
     }
+    this->plotReplot();
 }

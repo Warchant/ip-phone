@@ -38,6 +38,11 @@ WAV::WAV(std::string path)
     }
 }
 
+WAV::WAV()
+{
+    this->p_header = new HEADER();
+}
+
 WAV::~WAV()
 {
     delete p_header;
@@ -100,6 +105,8 @@ void WAV::open(std::string path)
             throw FILE_DATA_LOAD_FAIL;
         }
 
+        // Close file
+        fclose(pFile);
         this->state = true;
     }
     else

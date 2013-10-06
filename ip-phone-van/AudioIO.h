@@ -33,6 +33,8 @@ public:
     std::string getPath() const;
     void setPath(const std::string &value);
 
+    WAV *wav_header;
+
 protected:
     std::string path;
 

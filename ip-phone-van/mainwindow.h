@@ -24,10 +24,11 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
-    void setupPlot();
-    WAV *wav;
+    void plotSetup();
 
-    AudioIO a;
+    AudioIO *file;
+
+    void plotReplot();
 };
 
 #endif // MAINWINDOW_H

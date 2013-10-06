@@ -122,21 +122,7 @@
      </widget>
     </item>
     <item row="1" column="0" colspan="4">
-     <widget class="QScrollArea" name="scrollArea">
-      <property name="widgetResizable">
-       <bool>true</bool>
-      </property>
-      <widget class="QCustomPlot" name="customPlot">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>580</width>
-         <height>129</height>
-        </rect>
-       </property>
-      </widget>
-     </widget>
+     <widget class="QCustomPlot" name="customPlot" native="true"/>
     </item>
    </layout>
   </widget>

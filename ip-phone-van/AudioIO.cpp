@@ -9,23 +9,27 @@
 
 
 AudioIO::AudioIO(){
-
+    this->wav_header = new WAV();
 }
 
 
 
 AudioIO::~AudioIO(){
-
+    delete this->wav_header;
 }
+
 
 std::string AudioIO::getPath() const
 {
     return path;
 }
 
+
 void AudioIO::setPath(const std::string &value)
 {
+    delete this->wav_header;
     path = value;
+    this->wav_header = new WAV(this->path);
 }
 
 
