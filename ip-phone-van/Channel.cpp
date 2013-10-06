@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////
 //  Channel.cpp
 //  Implementation of the Class Channel
-//  Created on:      05-окт-2013 22:31:51
+//  Created on:      05-Oct-2013 22:31:51
 //  Original author: Bogdan Vaneev warchantua@gmail.com
 ///////////////////////////////////////////////////////////
 
@@ -32,9 +32,15 @@ const int Channel::getLossPercentage(){
 /**
  * @brief Setter for the lossPercentage.
  */
-void Channel::setLossPercentage(const int& lossPercentage){
+bool Channel::setLossPercentage(const int& lossPercentage){
 	if(lossPercentage >= 0 && lossPercentage <= 100)
 	{
 		this->lossPercentage = lossPercentage;
+        return true;
 	}
+    else
+    {
+        return false;
+    }
+
 }

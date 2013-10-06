@@ -122,11 +122,6 @@ WAV::operator bool(){
 }
 
 
-const unsigned char *WAV::getData() const
-{
-    return this->data;
-}
-
 WAV::HEADER *WAV::getHeader()
 {
     return this->p_header;

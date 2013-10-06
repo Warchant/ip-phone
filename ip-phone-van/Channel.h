@@ -1,7 +1,7 @@
 ///////////////////////////////////////////////////////////
 //  Channel.h
 //  Implementation of the Class Channel
-//  Created on:      05-окт-2013 22:31:51
+//  Created on:      05-Oct-2013 22:31:51
 //  Original author: Bogdan Vaneev warchantua@gmail.com
 ///////////////////////////////////////////////////////////
 
@@ -21,7 +21,7 @@ public:
 	Channel();
 	virtual ~Channel();
 	const int getLossPercentage();
-	void setLossPercentage(const int& lossPercentage);
+    bool setLossPercentage(const int& lossPercentage);
 
 private:
 	int lossPercentage;

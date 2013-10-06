@@ -39,10 +39,6 @@ public:
     void open(std::string path);
 	operator bool();
 
-    /*
-     * @brief Getter for data.
-     */
-    const unsigned char *getData() const;
 
     /*
      * Struct that holds the RIFF data of the Wave file.
@@ -93,13 +89,16 @@ public:
     HEADER *getHeader();
 
     WAV();
+
+    bool changed;
+    unsigned char *data;
 private:
     /*
      * @brief Header of WAVE file.
      */
     HEADER *p_header;
 	bool state;
-    unsigned char *data;
+
 };
 
 #endif // !defined(EA_9D02C5A1_1D02_4287_8FFE_606E2687AEFF__INCLUDED_)
