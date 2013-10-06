@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui multimedia printsupport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -14,9 +14,26 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    wav.cpp
+        wav.cpp \
+        AudioInput.cpp \
+        AudioIO.cpp \
+        AudioOutput.cpp \
+        Channel.cpp \
+        RepairAlgorithm.cpp \
+    qcustomplot.cpp
 
 HEADERS  += mainwindow.h \
-    wav.h
+        wav.h \
+        AudioInput.h \
+        AudioIO.h \
+        AudioOutput.h \
+        Channel.h \
+        RepairAlgorithm.h \
+    qcustomplot.h
 
 FORMS    += mainwindow.ui
+
+OTHER_FILES +=
+
+RESOURCES += \
+    recources.qrc

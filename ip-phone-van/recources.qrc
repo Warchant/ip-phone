@@ -1,0 +1,19 @@
+<RCC>
+    <qresource prefix="/">
+        <file>recources/actions/actionExit.png</file>
+        <file>recources/actions/actionNew.png</file>
+        <file>recources/actions/actionOpen.png</file>
+        <file>recources/actions/actionSave.png</file>
+        <file>recources/actions/actionSaveas.png</file>
+        <file>recources/buttons/buttonBackward.png</file>
+        <file>recources/buttons/buttonChannel.png</file>
+        <file>recources/buttons/buttonDelete.png</file>
+        <file>recources/buttons/buttonPause.png</file>
+        <file>recources/buttons/buttonPlay.png</file>
+        <file>recources/buttons/buttonRecover.png</file>
+        <file>recources/buttons/buttonStop.png</file>
+        <file>recources/buttons/buttonRec.png</file>
+        <file>recources/images/imageScience.png</file>
+        <file>recources/actions/actionInfo.png</file>
+    </qresource>
+</RCC>
