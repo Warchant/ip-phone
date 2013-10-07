@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -46,12 +47,8 @@ void MainWindow::plotReplot()
     }
 
     this->plotSetup();
-    // create graph and assign data to it:
     ui->customPlot->addGraph();
     ui->customPlot->graph(0)->setData(x,y);
-    // set axes ranges, so we see all data:
-
-
     ui->customPlot->replot();
 }
 

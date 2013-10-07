@@ -6,7 +6,6 @@
 #include "AudioIO.h"
 
 
-
 namespace Ui {
 class MainWindow;
 }
