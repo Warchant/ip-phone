@@ -9,13 +9,14 @@
 
 
 AudioOutput::AudioOutput(){
-
+    this->sourceFile.open(QIODevice::ReadOnly);
+    //this->format.setSampleRate();
 }
 
 
 
 AudioOutput::~AudioOutput(){
-
+    delete this->audio;
 }
 
 

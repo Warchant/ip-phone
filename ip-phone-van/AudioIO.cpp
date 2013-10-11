@@ -30,6 +30,7 @@ void AudioIO::setPath(const std::string &value)
     delete this->wav_header;
     path = value;
     this->wav_header = new WAV(this->path);
+    this->sourceFile.setFileName(value.c_str());
 }
 
 

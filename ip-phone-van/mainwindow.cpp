@@ -1,16 +1,14 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     this->file = new AudioIO();
-
+    this->dui  = new dialog_packets(this);
     ui->setupUi(this);
-
-    this->plotReplot();
+    this->plotSetup();
 }
 
 MainWindow::~MainWindow()
@@ -39,6 +37,7 @@ void MainWindow::plotReplot()
     int bps = file->wav_header->getHeader()->WAVE_F.bitsPerSample;
     int size = file->wav_header->getHeader()->WAVE_D.subChunk2Size;
     double time = double(size) / bps;
+
     QVector<double> x(size), y(size);
     for (int i=0; i<size; i++)
     {
@@ -55,16 +54,25 @@ void MainWindow::plotReplot()
 void MainWindow::on_action_open_triggered()
 {
     QFileDialog dialog(this);
+    // only existing file can be selected
     dialog.setFileMode(QFileDialog::ExistingFile);
+    // wav files only
     dialog.setNameFilter(tr("WAV files (*.wav)"));
+    // exec dialog
     if(dialog.exec())
     {
         file->setPath( dialog.selectedFiles().at(0).toStdString() );
+        this->plotReplot();
     }
-    this->plotReplot();
 }
 
 void MainWindow::on_action_exit_triggered()
 {
     exit(0);
+}
+
+void MainWindow::on_action_info_triggered()
+{
+    this->dui->show();
+
 }

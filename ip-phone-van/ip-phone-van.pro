@@ -20,7 +20,8 @@ SOURCES += main.cpp\
         AudioOutput.cpp \
         Channel.cpp \
         RepairAlgorithm.cpp \
-    qcustomplot.cpp
+    qcustomplot.cpp \
+    dialog_packets.cpp
 
 HEADERS  += mainwindow.h \
         wav.h \
@@ -29,9 +30,11 @@ HEADERS  += mainwindow.h \
         AudioOutput.h \
         Channel.h \
         RepairAlgorithm.h \
-    qcustomplot.h
+    qcustomplot.h \
+    dialog_packets.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    dialog_packets.ui
 
 OTHER_FILES +=
 
