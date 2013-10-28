@@ -97,7 +97,6 @@ private:
      * @brief Header of WAVE file.
      */
     HEADER *p_header;
-	bool state;
 
 };
 

@@ -117,11 +117,6 @@ void WAV::open(std::string path)
 
 
 
-WAV::operator bool(){
-	return this->state;
-}
-
-
 WAV::HEADER *WAV::getHeader()
 {
     return this->p_header;

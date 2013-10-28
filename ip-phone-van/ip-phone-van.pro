@@ -21,7 +21,8 @@ SOURCES += main.cpp\
         Channel.cpp \
         RepairAlgorithm.cpp \
     qcustomplot.cpp \
-    dialog_packets.cpp
+    dialog_packets.cpp \
+    tableviewrow.cpp
 
 HEADERS  += mainwindow.h \
         wav.h \
@@ -31,7 +32,8 @@ HEADERS  += mainwindow.h \
         Channel.h \
         RepairAlgorithm.h \
     qcustomplot.h \
-    dialog_packets.h
+    dialog_packets.h \
+    tableviewrow.h
 
 FORMS    += mainwindow.ui \
     dialog_packets.ui
