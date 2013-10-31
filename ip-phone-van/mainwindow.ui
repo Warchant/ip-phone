@@ -268,10 +268,10 @@
      <normaloff>:/recources/actions/actionInfo.png</normaloff>:/recources/actions/actionInfo.png</iconset>
    </property>
    <property name="text">
-    <string>Информация о файле</string>
+    <string>Заголовок WAV файла</string>
    </property>
    <property name="toolTip">
-    <string>Информация о файле</string>
+    <string>Заголовок WAV файла</string>
    </property>
   </action>
  </widget>

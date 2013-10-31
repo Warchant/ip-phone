@@ -39,7 +39,7 @@ void MainWindow::plotReplot()
     int size = wav.empty()?0: str2int(wav["subChunk2Size"]);
     double time = double(size) / bps;
 
-    const unsigned char * data = file->wav_header->getData();
+    const unsigned char * data = file->wav_header->data;
 
     QVector<double> x(size), y(size);
     for (int i=0; i<size; i++)

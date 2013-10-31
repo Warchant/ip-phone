@@ -49,11 +49,11 @@ const std::map<std::string, std::string> WAV::getHeader() const
     return this->header_data;
 }
 
-
-const unsigned char *WAV::getData() const
+const unsigned char *WAV::getOriginalData() const
 {
-    return this->data;
+    return this->original_data;
 }
+
 
 
 void WAV::fillHeaderData()
@@ -69,11 +69,11 @@ void WAV::fillHeaderData()
     this->header_data["byteRate"]      = int2str(p_header->WAVE_F.byteRate);
     this->header_data["numChannels"]   = int2str(p_header->WAVE_F.numChannels);
     this->header_data["sampleRate"]    = int2str(p_header->WAVE_F.sampleRate);
-    this->header_data["subChunkID"]    =         p_header->WAVE_F.subChunkID;
+    this->header_data["f_subChunkID"]    =         p_header->WAVE_F.subChunkID;
     this->header_data["subChunkSize"]  = int2str(p_header->WAVE_F.subChunkSize);
     // WAVE_DATA chunk
     this->header_data["subChunk2Size"] = int2str(p_header->WAVE_D.subChunk2Size);
-    this->header_data["subChunkID"]    =         p_header->WAVE_D.subChunkID;
+    this->header_data["d_subChunkID"]    =         p_header->WAVE_D.subChunkID;
 }
 
 WAV::~WAV()
@@ -101,6 +101,10 @@ void WAV::open(std::string path)
              throw FILE_BAD_HEADER;
         }
 
+        p_header->RIFF.chunkID[4] = '\0';
+        p_header->RIFF.format[4] = '\0';
+
+
         //Read in the 2nd chunk for the wave info
         fread(&p_header->WAVE_F, sizeof(p_header->WAVE_F), 1, pFile);
         //check for fmt tag in memory
@@ -111,6 +115,8 @@ void WAV::open(std::string path)
         {
             throw FILE_BAD_HEADER;
         }
+
+        p_header->WAVE_F.subChunkID[4] = '\0';
 
         //check for extra parameters;
         if (p_header->WAVE_F.subChunkSize > 16)
@@ -128,6 +134,8 @@ void WAV::open(std::string path)
         {
             throw FILE_BAD_HEADER;
         }
+
+        p_header->WAVE_D.subChunkID[4] = '\0';
 
         //Allocate memory for data
         this->data = new unsigned char[p_header->WAVE_D.subChunk2Size];

@@ -38,15 +38,16 @@ public:
      * @brief Getter for p_header
      */
     const std::map<std::string, std::string> getHeader() const;
-    const unsigned char *getData() const;
+    const unsigned char *getOriginalData() const;
+
+    unsigned char *data;
 
 private:
-
+    unsigned char *original_data;
     void fillHeaderData();
 
     std::map <std::string, std::string> header_data;
 
-    unsigned char *data;
 
     /*
      * @brief This function opens the WAVE file.
