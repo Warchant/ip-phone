@@ -4,8 +4,8 @@
 #include <QMainWindow>
 #include <QtWidgets>
 #include "AudioIO.h"
-#include "dialog_packets.h"
-
+#include "dialog_info.h"
+#include "functions.h"
 
 namespace Ui {
 class MainWindow;
@@ -26,6 +26,8 @@ private slots:
 
     void on_action_info_triggered();
 
+    void on_action_packetDelete_triggered();
+
 private:
     Ui::MainWindow *ui;
 
@@ -37,10 +39,6 @@ private:
     AudioIO *file;
 
     void plotReplot();
-    /*
-     * @brief Pointer to dialog user interface with settings.
-     */
-    dialog_packets *dui;
 };
 
 #endif // MAINWINDOW_H

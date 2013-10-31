@@ -43,6 +43,39 @@ WAV::WAV()
     this->p_header = new HEADER();
 }
 
+
+const std::map<std::string, std::string> WAV::getHeader() const
+{
+    return this->header_data;
+}
+
+
+const unsigned char *WAV::getData() const
+{
+    return this->data;
+}
+
+
+void WAV::fillHeaderData()
+{
+    // RIFF chunk
+    this->header_data["chunkID"]       =         p_header->RIFF.chunkID;
+    this->header_data["chunkSize"]     = int2str(p_header->RIFF.chunkSize);
+    this->header_data["format"]        =         p_header->RIFF.format;
+    // WAVE_FORMAT chunk
+    this->header_data["audioFormat"]   = int2str(p_header->WAVE_F.audioFormat);
+    this->header_data["bitsPerSample"] = int2str(p_header->WAVE_F.bitsPerSample);
+    this->header_data["blockAlign"]    = int2str(p_header->WAVE_F.blockAlign);
+    this->header_data["byteRate"]      = int2str(p_header->WAVE_F.byteRate);
+    this->header_data["numChannels"]   = int2str(p_header->WAVE_F.numChannels);
+    this->header_data["sampleRate"]    = int2str(p_header->WAVE_F.sampleRate);
+    this->header_data["subChunkID"]    =         p_header->WAVE_F.subChunkID;
+    this->header_data["subChunkSize"]  = int2str(p_header->WAVE_F.subChunkSize);
+    // WAVE_DATA chunk
+    this->header_data["subChunk2Size"] = int2str(p_header->WAVE_D.subChunk2Size);
+    this->header_data["subChunkID"]    =         p_header->WAVE_D.subChunkID;
+}
+
 WAV::~WAV()
 {
     delete p_header;
@@ -108,6 +141,8 @@ void WAV::open(std::string path)
         // Close file
         fclose(pFile);
         this->state = true;
+        // fill std::map
+        this->fillHeaderData();
     }
     else
     {
@@ -115,9 +150,6 @@ void WAV::open(std::string path)
     }
 }
 
-
-
-WAV::HEADER *WAV::getHeader()
-{
-    return this->p_header;
+WAV::operator bool(){
+	return this->state;
 }

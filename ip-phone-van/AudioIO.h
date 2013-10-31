@@ -28,12 +28,12 @@ public:
 	AudioIO();
 	virtual ~AudioIO();
 
+    WAV *wav_header;
+
 	virtual void stateChanged(QAudio::State newState);
 
     std::string getPath() const;
     void setPath(const std::string &value);
-
-    WAV *wav_header;
 
 protected:
     std::string path;

@@ -158,8 +158,8 @@
      <string>Действия</string>
     </property>
     <addaction name="action_info"/>
-    <addaction name="action"/>
-    <addaction name="actionPacketRecover"/>
+    <addaction name="action_packetDelete"/>
+    <addaction name="action_packetRecover"/>
    </widget>
    <addaction name="menu_file"/>
    <addaction name="menu"/>
@@ -193,8 +193,8 @@
    <addaction name="action_saveas"/>
    <addaction name="separator"/>
    <addaction name="action_info"/>
-   <addaction name="action"/>
-   <addaction name="actionPacketRecover"/>
+   <addaction name="action_packetDelete"/>
+   <addaction name="action_packetRecover"/>
   </widget>
   <action name="action_new">
    <property name="icon">
@@ -244,7 +244,7 @@
     <enum>QAction::QuitRole</enum>
    </property>
   </action>
-  <action name="action">
+  <action name="action_packetDelete">
    <property name="icon">
     <iconset resource="recources.qrc">
      <normaloff>:/recources/buttons/buttonDelete.png</normaloff>:/recources/buttons/buttonDelete.png</iconset>
@@ -253,7 +253,7 @@
     <string>Параметры удаления пакетов</string>
    </property>
   </action>
-  <action name="actionPacketRecover">
+  <action name="action_packetRecover">
    <property name="icon">
     <iconset resource="recources.qrc">
      <normaloff>:/recources/buttons/buttonRecover.png</normaloff>:/recources/buttons/buttonRecover.png</iconset>
