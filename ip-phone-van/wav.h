@@ -43,6 +43,7 @@ public:
     unsigned char *data;
 
 private:
+
     unsigned char *original_data;
     void fillHeaderData();
 

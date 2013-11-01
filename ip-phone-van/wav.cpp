@@ -100,7 +100,7 @@ void WAV::open(std::string path)
         {
              throw FILE_BAD_HEADER;
         }
-
+        // FIXME: size is 4 (0-3)
         p_header->RIFF.chunkID[4] = '\0';
         p_header->RIFF.format[4] = '\0';
 
@@ -115,7 +115,7 @@ void WAV::open(std::string path)
         {
             throw FILE_BAD_HEADER;
         }
-
+        // FIXME: subChunkID size is 4 (0-3)
         p_header->WAVE_F.subChunkID[4] = '\0';
 
         //check for extra parameters;
@@ -134,7 +134,7 @@ void WAV::open(std::string path)
         {
             throw FILE_BAD_HEADER;
         }
-
+        // FIXME: subChunkID size is 4 (0-3)
         p_header->WAVE_D.subChunkID[4] = '\0';
 
         //Allocate memory for data
@@ -149,6 +149,9 @@ void WAV::open(std::string path)
         // Close file
         fclose(pFile);
         this->state = true;
+        // save original data
+        this->original_data = new unsigned char [p_header->WAVE_D.subChunk2Size];
+        memcpy(this->original_data, this->data, p_header->WAVE_D.subChunk2Size);
         // fill std::map
         this->fillHeaderData();
     }

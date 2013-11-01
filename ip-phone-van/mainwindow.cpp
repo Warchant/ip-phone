@@ -86,4 +86,37 @@ void MainWindow::on_action_info_triggered()
 
 void MainWindow::on_action_packetDelete_triggered()
 {
+    std::map<std::string,std::string> wav = file->wav_header->getHeader();
+    if(wav.empty())
+        return;
+
+    Dialog_PacketDelete *dpd = new Dialog_PacketDelete(this);
+
+    double loss_rate = 0;
+    int    packet_length = 1;
+
+    if(dpd->exec())
+    {
+        loss_rate     = dpd->loss_rate;
+        packet_length = dpd->packet_length;
+        // true => pressed ok
+        if(dpd->accepted)
+        {
+            /* TODO:
+            int packets_to_loss = str2int(wav["subChunk2Size"]) * loss_rate;
+            for(int i=0; i<packets_to_loss; i++)
+            {
+                file->wav_header->data[rand()%]
+            }
+            */
+        }
+
+        delete dpd;
+    }
+}
+
+void MainWindow::on_pb_playpause_clicked()
+{
+
+
 }

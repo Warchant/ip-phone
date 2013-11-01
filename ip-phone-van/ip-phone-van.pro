@@ -22,7 +22,8 @@ SOURCES += main.cpp\
         RepairAlgorithm.cpp \
         qcustomplot.cpp \
         dialog_info.cpp \
-        functions.cpp
+        functions.cpp \
+    dialog_packetdelete.cpp
 
 HEADERS  += mainwindow.h \
         wav.h \
@@ -33,10 +34,12 @@ HEADERS  += mainwindow.h \
         RepairAlgorithm.h \
         qcustomplot.h \
         dialog_info.h \
-        functions.h
+        functions.h \
+    dialog_packetdelete.h
 
 FORMS    += mainwindow.ui \
-    dialog_info.ui
+    dialog_info.ui \
+    dialog_packetdelete.ui
 
 OTHER_FILES +=
 

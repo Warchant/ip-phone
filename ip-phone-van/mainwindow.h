@@ -5,6 +5,8 @@
 #include <QtWidgets>
 #include "AudioIO.h"
 #include "dialog_info.h"
+#include "dialog_packetdelete.h"
+#include "AudioOutput.h"
 #include "functions.h"
 
 namespace Ui {
@@ -27,6 +29,8 @@ private slots:
     void on_action_info_triggered();
 
     void on_action_packetDelete_triggered();
+
+    void on_pb_playpause_clicked();
 
 private:
     Ui::MainWindow *ui;
