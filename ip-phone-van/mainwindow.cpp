@@ -9,12 +9,16 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     this->plotSetup();
     this->actionsEnabled(false);
+
+    connect(ui->pb_record,SIGNAL(clicked()),this, SLOT(showmessage()));
+
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
 }
+
 
 void MainWindow::plotSetup()
 {
@@ -135,11 +139,7 @@ void MainWindow::on_action_packetDelete_triggered()
     }
 }
 
-void MainWindow::on_pb_playpause_clicked()
-{
 
-
-}
 
 void MainWindow::on_action_new_triggered()
 {
@@ -148,10 +148,36 @@ void MainWindow::on_action_new_triggered()
     setWindowTitle("Waver");
     this->actionsEnabled(false);
     this->plotReplot();
+
 }
+
 
 void MainWindow::on_action_save_triggered()
 {
-    file->sourceFile.open(QIODevice::WriteOnly);
 
+}
+
+
+void MainWindow::on_pb_stop_clicked()
+{
+    if(file->isOpened())
+    {
+        ui->pb_playpause->setChecked(false);
+        file->stopPlayback();
+    }
+}
+
+
+void MainWindow::on_pb_playpause_toggled(bool checked)
+{
+    if(checked)
+    {
+        file->startPlayback();
+        ui->pb_playpause->setIcon(QIcon(":/recources/buttons/buttonPause.png"));
+    }
+    else
+    {
+        file->pausePlayback();
+        ui->pb_playpause->setIcon(QIcon(":/recources/buttons/buttonPlay.png"));
+    }
 }

@@ -15,10 +15,7 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
         wav.cpp \
-        AudioInput.cpp \
         AudioIO.cpp \
-        AudioOutput.cpp \
-        Channel.cpp \
         RepairAlgorithm.cpp \
         qcustomplot.cpp \
         dialog_info.cpp \
@@ -27,10 +24,7 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h \
         wav.h \
-        AudioInput.h \
         AudioIO.h \
-        AudioOutput.h \
-        Channel.h \
         RepairAlgorithm.h \
         qcustomplot.h \
         dialog_info.h \

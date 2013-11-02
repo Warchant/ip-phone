@@ -6,7 +6,6 @@
 #include "AudioIO.h"
 #include "dialog_info.h"
 #include "dialog_packetdelete.h"
-#include "AudioOutput.h"
 #include "functions.h"
 
 namespace Ui {
@@ -22,6 +21,7 @@ public:
     ~MainWindow();
 
 private slots:
+
     void on_action_open_triggered();
 
     void on_action_exit_triggered();
@@ -30,16 +30,18 @@ private slots:
 
     void on_action_packetDelete_triggered();
 
-    void on_pb_playpause_clicked();
-
     void on_action_new_triggered();
 
     void on_action_save_triggered();
 
+    void on_pb_stop_clicked();
+
+    void on_pb_playpause_toggled(bool checked);
+
 private:
     Ui::MainWindow *ui;
 
-    /*
+    /**
      * @brief Set up axis, set up labels, user interactions, etc.
      */
     void plotSetup();

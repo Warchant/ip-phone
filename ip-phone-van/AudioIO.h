@@ -10,32 +10,53 @@
 
 #include <QtMultimedia/QMultimedia>
 #include <QtMultimedia/QAudioFormat>
-#include <QtMultimedia/QAudioOutput>
 #include <QtMultimedia/QAudioInput>
-#include <QtMultimedia/QAudio>
+#include <QtMultimedia/QAudioOutput>
 #include <QFileDialog>
 #include <QObject>
 #include <QFile>
 #include <string>
 #include "wav.h"
+
 /**
  * @class AudioIO
  */
-class AudioIO
+class AudioIO : public QObject
 {
-
+signals:
+    void outputStateChanged(QAudio::State newState);
+public slots:
+    void finishedPlayback(QAudio::State newState);
 public:
+
 	AudioIO();
+
 	virtual ~AudioIO();
 
     WAV *wav_header;
 
-	virtual void stateChanged(QAudio::State newState);
-
+    /**
+     * @brief Getter for path;
+     * @return this->path
+     */
     std::string getPath() const;
+    /**
+     * @brief Setter for path;
+     * @param std::string path
+     */
     void setPath(const std::string &value);
 
-protected:
+    void startRecording();
+    void stopRecording();
+
+    void pausePlayback();
+    void startPlayback();
+    void stopPlayback ();
+
+    bool isOpened();
+
+private:
+
     std::string path;
 
     QAudioFormat format;
@@ -43,6 +64,9 @@ protected:
      * @brief File to read/write.
 	 */
 	QFile sourceFile;
+
+    QAudioOutput* out;
+    QAudioOutput* in;
 
 };
 #endif // !defined(EA_156433C8_98E7_4462_AB16_1CEF25E5C1A0__INCLUDED_)
