@@ -9,6 +9,9 @@
 #include "functions.h"
 
 namespace Ui {
+
+void resetPlayerButtons();
+
 class MainWindow;
 }
 
@@ -38,9 +41,13 @@ private slots:
 
     void on_pb_playpause_toggled(bool checked);
 
-private:
+
+
+public:
+
     Ui::MainWindow *ui;
 
+private:
     /**
      * @brief Set up axis, set up labels, user interactions, etc.
      */
@@ -51,6 +58,8 @@ private:
     void plotReplot();
 
     void actionsEnabled(bool state);
+
 };
+
 
 #endif // MAINWINDOW_H

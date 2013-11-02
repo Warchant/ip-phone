@@ -8,6 +8,7 @@
 #if !defined(EA_156433C8_98E7_4462_AB16_1CEF25E5C1A0__INCLUDED_)
 #define EA_156433C8_98E7_4462_AB16_1CEF25E5C1A0__INCLUDED_
 
+#include <QPushButton>
 #include <QtMultimedia/QMultimedia>
 #include <QtMultimedia/QAudioFormat>
 #include <QtMultimedia/QAudioInput>
@@ -23,14 +24,14 @@
  */
 class AudioIO : public QObject
 {
-signals:
-    void outputStateChanged(QAudio::State newState);
-public slots:
-    void finishedPlayback(QAudio::State newState);
+    Q_OBJECT
+private slots:
+
+    void handleStateChanged(QAudio::State newState);
+
 public:
 
-	AudioIO();
-
+    AudioIO();
 	virtual ~AudioIO();
 
     WAV *wav_header;
@@ -53,7 +54,10 @@ public:
     void startPlayback();
     void stopPlayback ();
 
-    bool isOpened();
+    bool isOpen();
+
+    QAudioOutput* out;
+    QAudioOutput* in;
 
 private:
 
@@ -65,8 +69,6 @@ private:
 	 */
 	QFile sourceFile;
 
-    QAudioOutput* out;
-    QAudioOutput* in;
 
 };
 #endif // !defined(EA_156433C8_98E7_4462_AB16_1CEF25E5C1A0__INCLUDED_)

@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -9,10 +10,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     this->plotSetup();
     this->actionsEnabled(false);
-
-    connect(ui->pb_record,SIGNAL(clicked()),this, SLOT(showmessage()));
-
 }
+
 
 MainWindow::~MainWindow()
 {
@@ -69,6 +68,7 @@ void MainWindow::actionsEnabled(bool state)
     ui->pb_playpause->setDisabled(!state);
     ui->pb_stop->setDisabled(!state);
 }
+
 
 void MainWindow::on_action_open_triggered()
 {
@@ -160,7 +160,7 @@ void MainWindow::on_action_save_triggered()
 
 void MainWindow::on_pb_stop_clicked()
 {
-    if(file->isOpened())
+    if(file->isOpen())
     {
         ui->pb_playpause->setChecked(false);
         file->stopPlayback();
@@ -177,7 +177,8 @@ void MainWindow::on_pb_playpause_toggled(bool checked)
     }
     else
     {
-        file->pausePlayback();
+        if(!file->isOpen())
+            file->pausePlayback();
         ui->pb_playpause->setIcon(QIcon(":/recources/buttons/buttonPlay.png"));
     }
 }

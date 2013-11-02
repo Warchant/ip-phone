@@ -13,7 +13,6 @@ AudioIO::AudioIO(){
 }
 
 
-
 AudioIO::~AudioIO(){
     delete this->wav_header;
     sourceFile.close();
@@ -43,11 +42,6 @@ void AudioIO::setPath(const std::string &value)
     format.setCodec       ( "audio/pcm" );
     format.setByteOrder   ( QAudioFormat::LittleEndian );
     format.setSampleType  ( bps == 8 ? QAudioFormat::UnSignedInt : QAudioFormat::SignedInt );
-    /*
-     * TODO: connect signal to slot
-     */
-    //connect(out,SIGNAL(outputStateChanged(QAudio::State)),this, SLOT(finishedPlayback(QAudio::State)));
-
 }
 
 
@@ -60,40 +54,43 @@ void AudioIO::pausePlayback(){
 void AudioIO::startPlayback(){
     if(!sourceFile.isOpen())
         sourceFile.open(QIODevice::ReadOnly);
-    out = new QAudioOutput(format);
+    out = new QAudioOutput(format, this);
     out->start(&sourceFile);
+    connect(out, SIGNAL(stateChanged(QAudio::State)), SLOT(handleStateChanged(QAudio::State)));
 }
 
 
 void AudioIO::stopPlayback(){
+    pausePlayback();
     delete out;
     sourceFile.close();
+
 }
 
-bool AudioIO::isOpened()
+
+bool AudioIO::isOpen()
 {
     return sourceFile.isOpen();
 }
 
-void AudioIO::finishedPlayback(QAudio::State newState)
-{
-    if (newState == QAudio::IdleState) {
-        pausePlayback();
-        stopPlayback();
-    }
-}
 
-
-void AudioIO::outputStateChanged(QAudio::State newState)
+void AudioIO::handleStateChanged(QAudio::State newState)
 {
-switch (newState) {
-    case QAudio::StoppedState:
-        if (out->error() != QAudio::NoError) {
-            printf("Something bad with audio stopping\n");
-        } else {
-            pausePlayback();
+    switch (newState) {
+        case QAudio::IdleState:
+            // Finished playing (no more data)
             stopPlayback();
-        }
-    break;
+            break;
+
+        case QAudio::StoppedState:
+            // Stopped for other reasons
+            if (out->error() != QAudio::NoError) {
+                // Error handling
+            }
+            break;
+
+        default:
+            // ... other cases as appropriate
+            break;
     }
 }
