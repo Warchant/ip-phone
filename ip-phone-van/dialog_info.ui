@@ -7,11 +7,27 @@
     <x>0</x>
     <y>0</y>
     <width>336</width>
-    <height>467</height>
+    <height>440</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>336</width>
+    <height>440</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>336</width>
+    <height>440</height>
+   </size>
+  </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>WAV Information</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="recources.qrc">
+    <normaloff>:/recources/actions/actionInfo.png</normaloff>:/recources/actions/actionInfo.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="1" column="0">
@@ -94,7 +110,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="recources.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>buttonBox</sender>

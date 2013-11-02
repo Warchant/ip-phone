@@ -32,6 +32,10 @@ private slots:
 
     void on_pb_playpause_clicked();
 
+    void on_action_new_triggered();
+
+    void on_action_save_triggered();
+
 private:
     Ui::MainWindow *ui;
 
@@ -43,6 +47,8 @@ private:
     AudioIO *file;
 
     void plotReplot();
+
+    void actionsEnabled(bool state);
 };
 
 #endif // MAINWINDOW_H

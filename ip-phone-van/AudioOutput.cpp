@@ -27,7 +27,8 @@ void AudioOutput::pausePlayback(){
 
 
 void AudioOutput::startPlayback(){
-    sourceFile.open(QIODevice::ReadOnly);
+/* TODO
+ *    sourceFile.open(QIODevice::ReadOnly);
 
     std::map<std::string,std::string> wav = wav_header->getHeader();
 
@@ -37,7 +38,7 @@ void AudioOutput::startPlayback(){
     format.setSampleSize  ( str2int(wav["sampleRate"]) );
     format.setCodec       ( "audio/pcm");
     format.setByteOrder(QAudioFormat::LittleEndian);
-    format.setSampleType(QAudioFormat::UnSignedInt);
+    format.setSampleType(bps == 8 ? QAudioFormat::UnSignedInt : QAudioFormat::SignedInt);
 
     QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
    if (!info.isFormatSupported(format)) {
@@ -48,6 +49,7 @@ void AudioOutput::startPlayback(){
    audio = new QAudioOutput(format, 0);
    //connect(audio, SIGNAL(stateChanged(QAudio::State)), this, SLOT(handleStateChanged(QAudio::State)));
    audio->start(&sourceFile);
+   */
 }
 
 

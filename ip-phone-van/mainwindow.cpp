@@ -8,6 +8,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->file = new AudioIO();
     ui->setupUi(this);
     this->plotSetup();
+    this->actionsEnabled(false);
 }
 
 MainWindow::~MainWindow()
@@ -54,6 +55,17 @@ void MainWindow::plotReplot()
     ui->customPlot->replot();
 }
 
+void MainWindow::actionsEnabled(bool state)
+{
+    ui->action_info->setDisabled(!state);
+    ui->action_packetDelete->setDisabled(!state);
+    ui->action_packetRecover->setDisabled(!state);
+    ui->action_save->setDisabled(!state);
+    ui->action_saveas->setDisabled(!state);
+    ui->pb_playpause->setDisabled(!state);
+    ui->pb_stop->setDisabled(!state);
+}
+
 void MainWindow::on_action_open_triggered()
 {
     QFileDialog dialog(this);
@@ -64,8 +76,11 @@ void MainWindow::on_action_open_triggered()
     // exec dialog
     if(dialog.exec())
     {
-        file->setPath( dialog.selectedFiles().at(0).toStdString() );
+        QString path = dialog.selectedFiles().at(0);
+        file->setPath( path.toStdString() );
         this->plotReplot();
+        setWindowTitle("Waver (" + path + ")");
+        this->actionsEnabled(true);
     }
 }
 
@@ -77,6 +92,10 @@ void MainWindow::on_action_exit_triggered()
 void MainWindow::on_action_info_triggered()
 {
     std::map<std::string,std::string> wav = file->wav_header->getHeader();
+
+    if(wav.empty())
+        return;
+
     Dialog_Info *di = new Dialog_Info(wav, this);
     if(di->exec())
     {
@@ -87,6 +106,7 @@ void MainWindow::on_action_info_triggered()
 void MainWindow::on_action_packetDelete_triggered()
 {
     std::map<std::string,std::string> wav = file->wav_header->getHeader();
+
     if(wav.empty())
         return;
 
@@ -118,5 +138,20 @@ void MainWindow::on_action_packetDelete_triggered()
 void MainWindow::on_pb_playpause_clicked()
 {
 
+
+}
+
+void MainWindow::on_action_new_triggered()
+{
+    delete file->wav_header;
+    file->wav_header = new WAV();
+    setWindowTitle("Waver");
+    this->actionsEnabled(false);
+    this->plotReplot();
+}
+
+void MainWindow::on_action_save_triggered()
+{
+    file->sourceFile.open(QIODevice::WriteOnly);
 
 }
