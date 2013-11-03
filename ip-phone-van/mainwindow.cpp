@@ -177,7 +177,7 @@ void MainWindow::on_pb_playpause_toggled(bool checked)
     }
     else
     {
-        if(!file->isOpen())
+        if(file->isOpen())
             file->pausePlayback();
         ui->pb_playpause->setIcon(QIcon(":/recources/buttons/buttonPlay.png"));
     }
