@@ -60,13 +60,16 @@ void MainWindow::plotReplot()
 
 void MainWindow::actionsEnabled(bool state)
 {
+    // Disabled
+    ui->action_save->setDisabled(!state);
+    ui->action_saveas->setDisabled(!state);
     ui->action_info->setDisabled(!state);
     ui->action_packetDelete->setDisabled(!state);
     ui->action_packetRecover->setDisabled(!state);
-    ui->action_save->setDisabled(!state);
-    ui->action_saveas->setDisabled(!state);
-    ui->pb_playpause->setDisabled(!state);
-    ui->pb_stop->setDisabled(!state);
+    ui->action_stop->setDisabled(!state);
+    // Visible
+    ui->action_playpause->setVisible(state);
+
 }
 
 
@@ -158,27 +161,26 @@ void MainWindow::on_action_save_triggered()
 }
 
 
-void MainWindow::on_pb_stop_clicked()
-{
-    if(file->isOpen())
-    {
-        ui->pb_playpause->setChecked(false);
-        file->stopPlayback();
-    }
-}
-
-
-void MainWindow::on_pb_playpause_toggled(bool checked)
+void MainWindow::on_action_playpause_triggered(bool checked)
 {
     if(checked)
     {
         file->startPlayback();
-        ui->pb_playpause->setIcon(QIcon(":/recources/buttons/buttonPause.png"));
+        ui->action_playpause->setIcon(QIcon(":/recources/buttons/buttonPause.png"));
     }
     else
     {
         if(file->isOpen())
             file->pausePlayback();
-        ui->pb_playpause->setIcon(QIcon(":/recources/buttons/buttonPlay.png"));
+        ui->action_playpause->setIcon(QIcon(":/recources/buttons/buttonPlay.png"));
+    }
+}
+
+void MainWindow::on_action_stop_triggered()
+{
+    if(file->isOpen())
+    {
+        ui->action_playpause->setChecked(false);
+        file->stopPlayback();
     }
 }

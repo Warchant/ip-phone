@@ -37,11 +37,9 @@ private slots:
 
     void on_action_save_triggered();
 
-    void on_pb_stop_clicked();
+    void on_action_playpause_triggered(bool checked);
 
-    void on_pb_playpause_toggled(bool checked);
-
-
+    void on_action_stop_triggered();
 
 public:
 

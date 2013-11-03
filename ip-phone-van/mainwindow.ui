@@ -25,107 +25,7 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <widget class="QPushButton" name="pb_playpause">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>16</width>
-        <height>16</height>
-       </size>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="icon">
-       <iconset resource="recources.qrc">
-        <normaloff>:/recources/buttons/buttonPlay.png</normaloff>:/recources/buttons/buttonPlay.png</iconset>
-      </property>
-      <property name="checkable">
-       <bool>true</bool>
-      </property>
-      <property name="autoExclusive">
-       <bool>false</bool>
-      </property>
-      <property name="autoRepeatDelay">
-       <number>100</number>
-      </property>
-      <property name="flat">
-       <bool>false</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="1">
-     <widget class="QPushButton" name="pb_stop">
-      <property name="minimumSize">
-       <size>
-        <width>16</width>
-        <height>16</height>
-       </size>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="icon">
-       <iconset resource="recources.qrc">
-        <normaloff>:/recources/buttons/buttonStop.png</normaloff>:/recources/buttons/buttonStop.png</iconset>
-      </property>
-      <property name="autoRepeatDelay">
-       <number>100</number>
-      </property>
-      <property name="flat">
-       <bool>false</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="2">
-     <widget class="QPushButton" name="pb_record">
-      <property name="minimumSize">
-       <size>
-        <width>16</width>
-        <height>16</height>
-       </size>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-      <property name="icon">
-       <iconset resource="recources.qrc">
-        <normaloff>:/recources/buttons/buttonRec.png</normaloff>:/recources/buttons/buttonRec.png</iconset>
-      </property>
-      <property name="checkable">
-       <bool>true</bool>
-      </property>
-      <property name="checked">
-       <bool>false</bool>
-      </property>
-      <property name="autoRepeatDelay">
-       <number>100</number>
-      </property>
-      <property name="flat">
-       <bool>false</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="3">
-     <spacer name="horizontalSpacer">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>104</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
-    <item row="1" column="0" colspan="4">
+    <item row="0" column="0" colspan="2">
      <widget class="QCustomPlot" name="customPlot" native="true"/>
     </item>
    </layout>
@@ -161,7 +61,16 @@
     <addaction name="action_packetDelete"/>
     <addaction name="action_packetRecover"/>
    </widget>
+   <widget class="QMenu" name="menu_2">
+    <property name="title">
+     <string>Медиа</string>
+    </property>
+    <addaction name="action_playpause"/>
+    <addaction name="action_stop"/>
+    <addaction name="action_record"/>
+   </widget>
    <addaction name="menu_file"/>
+   <addaction name="menu_2"/>
    <addaction name="menu"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
@@ -191,6 +100,10 @@
    <addaction name="action_open"/>
    <addaction name="action_save"/>
    <addaction name="action_saveas"/>
+   <addaction name="separator"/>
+   <addaction name="action_playpause"/>
+   <addaction name="action_stop"/>
+   <addaction name="action_record"/>
    <addaction name="separator"/>
    <addaction name="action_info"/>
    <addaction name="action_packetDelete"/>
@@ -272,6 +185,45 @@
    </property>
    <property name="toolTip">
     <string>Заголовок WAV файла</string>
+   </property>
+  </action>
+  <action name="action_playpause">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="recources.qrc">
+     <normaloff>:/recources/buttons/buttonPlay.png</normaloff>:/recources/buttons/buttonPlay.png</iconset>
+   </property>
+   <property name="text">
+    <string>Play / Pause</string>
+   </property>
+   <property name="visible">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="action_stop">
+   <property name="icon">
+    <iconset resource="recources.qrc">
+     <normaloff>:/recources/buttons/buttonStop.png</normaloff>:/recources/buttons/buttonStop.png</iconset>
+   </property>
+   <property name="text">
+    <string>Stop</string>
+   </property>
+  </action>
+  <action name="action_record">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="recources.qrc">
+     <normaloff>:/recources/buttons/buttonRec.png</normaloff>:/recources/buttons/buttonRec.png</iconset>
+   </property>
+   <property name="text">
+    <string>Record</string>
    </property>
   </action>
  </widget>
