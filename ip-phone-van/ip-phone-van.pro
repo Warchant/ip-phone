@@ -20,7 +20,8 @@ SOURCES += main.cpp\
         qcustomplot.cpp \
         dialog_info.cpp \
         functions.cpp \
-    dialog_packetdelete.cpp
+    dialog_packetdelete.cpp \
+    dialog_record.cpp
 
 HEADERS  += mainwindow.h \
         wav.h \
@@ -29,11 +30,13 @@ HEADERS  += mainwindow.h \
         qcustomplot.h \
         dialog_info.h \
         functions.h \
-    dialog_packetdelete.h
+    dialog_packetdelete.h \
+    dialog_record.h
 
 FORMS    += mainwindow.ui \
     dialog_info.ui \
-    dialog_packetdelete.ui
+    dialog_packetdelete.ui \
+    dialog_record.ui
 
 OTHER_FILES +=
 

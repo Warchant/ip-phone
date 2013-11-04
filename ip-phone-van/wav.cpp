@@ -49,11 +49,21 @@ const std::map<std::string, std::string> WAV::getHeader() const
     return this->header_data;
 }
 
+
 const unsigned char *WAV::getOriginalData() const
 {
     return this->original_data;
 }
 
+/*
+ * TODO
+ */
+/*
+void WAV::setHeader(const std::map<std::string, std::string> &header)
+{
+
+}
+*/
 
 
 void WAV::fillHeaderData()

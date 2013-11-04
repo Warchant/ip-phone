@@ -13,6 +13,7 @@
 #include <QtMultimedia/QAudioFormat>
 #include <QtMultimedia/QAudioInput>
 #include <QtMultimedia/QAudioOutput>
+#include <QMessageBox>
 #include <QFileDialog>
 #include <QObject>
 #include <QFile>
@@ -25,9 +26,11 @@
 class AudioIO : public QObject
 {
     Q_OBJECT
+
 private slots:
 
-    void handleStateChanged(QAudio::State newState);
+    void handleOutputStateChanged(QAudio::State newState);
+    void handleInputStateChanged(QAudio::State newState);
 
 public:
 
@@ -47,19 +50,21 @@ public:
      */
     void setPath(const std::string &value);
 
-    void startRecording();
+    void startRecording(int sampleRate, int channels, int bps);
     void stopRecording();
 
-    void pausePlayback();
     void startPlayback();
+    void pausePlayback();
     void stopPlayback ();
 
     bool isOpen();
 
     QAudioOutput* out;
-    QAudioOutput* in;
+    QAudioInput* in;
 
 private:
+
+    void addWavHeader();
 
     std::string path;
 

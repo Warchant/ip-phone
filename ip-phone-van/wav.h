@@ -39,6 +39,7 @@ public:
      */
     const std::map<std::string, std::string> getHeader() const;
     const unsigned char *getOriginalData() const;
+    void setHeader(const std::map<std::string, std::string> &header);
 
     unsigned char *data;
 

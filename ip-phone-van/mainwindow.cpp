@@ -69,7 +69,6 @@ void MainWindow::actionsEnabled(bool state)
     ui->action_stop->setDisabled(!state);
     // Visible
     ui->action_playpause->setVisible(state);
-
 }
 
 
@@ -143,7 +142,6 @@ void MainWindow::on_action_packetDelete_triggered()
 }
 
 
-
 void MainWindow::on_action_new_triggered()
 {
     delete file->wav_header;
@@ -176,11 +174,44 @@ void MainWindow::on_action_playpause_triggered(bool checked)
     }
 }
 
+
 void MainWindow::on_action_stop_triggered()
 {
+    ui->action_playpause->setChecked(false);
     if(file->isOpen())
     {
-        ui->action_playpause->setChecked(false);
         file->stopPlayback();
+    }
+}
+
+
+void MainWindow::on_action_record_triggered(bool checked)
+{
+    if(checked)
+    {
+        Dialog_Record *dr = new Dialog_Record();
+        switch(dr->exec())
+        {
+        case QDialog::Accepted:
+        {
+            // begin recording
+            int sampleRate = dr->getSampleRate();
+            int channels   = dr->getChannels();
+            int bps        = dr->getBps();
+
+            file->startRecording(sampleRate, channels, bps);
+            break;
+        }
+        case QDialog::Rejected:
+        {
+            ui->action_record->setChecked(false);
+            break;
+        }
+        }
+        delete dr;
+    }
+    else
+    {
+        file->stopRecording();
     }
 }
