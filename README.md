@@ -1,4 +1,5 @@
 ip-phone
 ========
 README
-ip-phone
+
+Bogdan Vaneev © warchantua@gmail.com
