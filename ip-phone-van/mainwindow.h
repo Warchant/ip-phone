@@ -6,7 +6,6 @@
 #include "AudioIO.h"
 #include "dialog_info.h"
 #include "dialog_packetdelete.h"
-#include "dialog_record.h"
 #include "functions.h"
 
 namespace Ui {
@@ -42,13 +41,9 @@ private slots:
 
     void on_action_stop_triggered();
 
-    void on_action_record_triggered(bool checked);
-
-public:
+private:
 
     Ui::MainWindow *ui;
-
-private:
     /**
      * @brief Set up axis, set up labels, user interactions, etc.
      */

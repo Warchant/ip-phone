@@ -183,35 +183,3 @@ void MainWindow::on_action_stop_triggered()
         file->stopPlayback();
     }
 }
-
-
-void MainWindow::on_action_record_triggered(bool checked)
-{
-    if(checked)
-    {
-        Dialog_Record *dr = new Dialog_Record();
-        switch(dr->exec())
-        {
-        case QDialog::Accepted:
-        {
-            // begin recording
-            int sampleRate = dr->getSampleRate();
-            int channels   = dr->getChannels();
-            int bps        = dr->getBps();
-
-            file->startRecording(sampleRate, channels, bps);
-            break;
-        }
-        case QDialog::Rejected:
-        {
-            ui->action_record->setChecked(false);
-            break;
-        }
-        }
-        delete dr;
-    }
-    else
-    {
-        file->stopRecording();
-    }
-}

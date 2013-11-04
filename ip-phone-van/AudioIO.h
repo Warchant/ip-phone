@@ -11,7 +11,6 @@
 #include <QPushButton>
 #include <QtMultimedia/QMultimedia>
 #include <QtMultimedia/QAudioFormat>
-#include <QtMultimedia/QAudioInput>
 #include <QtMultimedia/QAudioOutput>
 #include <QMessageBox>
 #include <QFileDialog>
@@ -50,9 +49,6 @@ public:
      */
     void setPath(const std::string &value);
 
-    void startRecording(int sampleRate, int channels, int bps);
-    void stopRecording();
-
     void startPlayback();
     void pausePlayback();
     void stopPlayback ();
@@ -60,7 +56,6 @@ public:
     bool isOpen();
 
     QAudioOutput* out;
-    QAudioInput* in;
 
 private:
 
