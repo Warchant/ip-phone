@@ -22,17 +22,24 @@ MainWindow::~MainWindow()
 void MainWindow::plotSetup()
 {
     std::map <std::string, std::string> wav = file->wav_header->getHeader();
-    int bps = wav.empty()?0:str2int(wav["bitsPerSample"]);
-    double time = 1.* str2int(wav["subChunk2Size"]) / bps;
+    int     bps = wav.empty()?0:str2int(wav["bitsPerSample"]);
+    int    size = str2int(wav["subChunk2Size"]);
+    double time = 1.* size / bps;
+    int     min = 255;
+    int     max = 0;
 
-    ui->customPlot->yAxis->setRange(-1,256);
+    for(int i=0; i<size; i++)
+    {
+        min = min > file->wav_header->data[i] ? file->wav_header->data[i] : min;
+        max = max < file->wav_header->data[i] ? file->wav_header->data[i] : max;
+    }
+
     // Set ranges to top and bottom axis
-    ui->customPlot->xAxis->setRangeLower(0);
-    ui->customPlot->xAxis->setRangeUpper(time);
+    ui->customPlot->yAxis->setRange(min-1,max+1);
+    ui->customPlot->xAxis->setRange(0, time);
     ui->customPlot->setInteractions( QCP::iRangeDrag | QCP::iRangeZoom );
     ui->customPlot->axisRect(0)->setRangeDrag(Qt::Horizontal);
     ui->customPlot->axisRect(0)->setRangeZoom(Qt::Horizontal);
-    ui->customPlot->yAxis->setVisible(false);
     ui->customPlot->xAxis->setLabel("Time, ms");
 }
 
@@ -116,18 +123,20 @@ void MainWindow::on_action_packetDelete_triggered()
     if(wav.empty())
         return;
 
-    Dialog_PacketDelete *dpd = new Dialog_PacketDelete(this);
+    int length = str2int(wav["subChunk2Size"]);
 
-    double loss_rate = 0;
+    Dialog_PacketDelete *dpd = new Dialog_PacketDelete(length,this);
+
+    int    to_delete = 0;
     int    packet_length = 1;
 
     if(dpd->exec())
     {
-        loss_rate     = dpd->loss_rate;
+        to_delete     = dpd->to_delete;
         packet_length = dpd->packet_length;
         // true => pressed ok
-        if(dpd->accepted)
-        {
+        //if(dpd->accepted)
+        //{
             /* TODO:
             int packets_to_loss = str2int(wav["subChunk2Size"]) * loss_rate;
             for(int i=0; i<packets_to_loss; i++)
@@ -135,7 +144,7 @@ void MainWindow::on_action_packetDelete_triggered()
                 file->wav_header->data[rand()%]
             }
             */
-        }
+        //}
 
         delete dpd;
     }
