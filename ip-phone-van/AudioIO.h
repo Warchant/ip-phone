@@ -54,9 +54,9 @@ public:
 
     bool isOpen();
 
-    QAudioOutput* out;
-
 private:
+
+    QAudioOutput* out;
 
     void addWavHeader();
 

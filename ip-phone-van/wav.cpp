@@ -174,3 +174,12 @@ void WAV::open(std::string path)
 WAV::operator bool(){
 	return this->state;
 }
+
+
+void WAV::convert2data(QVector<double> y)
+{
+    for(int i=0;i<y.size();i++)
+    {
+        this->data[i] = (unsigned char)(y[i]);
+    }
+}

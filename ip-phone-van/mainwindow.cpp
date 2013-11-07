@@ -18,11 +18,6 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
-    for(std::vector<unsigned char *>::iterator it = packets.begin();
-        it!=packets.end(); ++it)
-    {
-        delete *it;
-    }
 }
 
 
@@ -54,8 +49,14 @@ void MainWindow::plotSetup()
     ui->customPlot->yAxis->setVisible(true);
 }
 
-
 void MainWindow::plotReplot()
+{
+    std::vector <int> empty;
+    this->plotReplot(empty);
+}
+
+
+void MainWindow::plotReplot(std::vector <int> ignore)
 {
     std::map <std::string, std::string> wav = file->wav_header->getHeader();
     int     bps = wav.empty()?0: str2int(wav["bitsPerSample"]);
@@ -70,7 +71,17 @@ void MainWindow::plotReplot()
         x[i] = time*(double(i)/(size-1)); 
         y[i] = double(data[i]);
     }
-
+    if(!ignore.empty())
+    {
+        int mean = std::accumulate(y.begin(), y.end(), 0.0) / y.size();
+        for (int i=0; i<ignore.size();i++ )
+        {
+            for(int j=0; j<this->packetLength; j++)
+            {
+                y[ignore[i]*this->packetLength + j] = mean ;
+            }
+        }
+    }
     this->plotSetup();
     ui->customPlot->addGraph();
     ui->customPlot->graph(0)->setData(x,y);
@@ -95,7 +106,10 @@ std::vector <int> MainWindow::randVector(int begin, int end, int amount)
 {
     int length = end - begin;
     std::vector <int> rnd(length);
-    std::for_each(rnd.begin(),rnd.end(),[&begin](int &a){a = begin++;});
+    for(int i=0; i<length; i++)
+    {
+        rnd[i] = (i+begin);
+    }
     std::random_shuffle(rnd.begin(), rnd.end());
     rnd.resize(amount);
     return rnd;
@@ -157,40 +171,26 @@ void MainWindow::on_action_packetDelete_triggered()
     {
         to_delete     = dpd->to_delete;         // amount of packets to delete
         packet_length = dpd->packet_length;     // packet size in bytes
+        this->packetLength = packet_length;
         int size      = length/packet_length;   // size of new array: data divided into packets
 
-        this->packets.resize(size);
-        for(int i=0; i<size; i++)
-        {
-            this->packets[i] = new unsigned char[packet_length];
-            unsigned char *c = new unsigned char[packet_length];
-            for(int j=0; j<packet_length; j++)
-            {
-                c[j] = file->wav_header->data[i*packet_length + j];
-            }
-            memcpy(this->packets[i],c, packet_length);
-            delete [] c;
-        }
-
         std::vector <int> del_index = randVector(0,size,to_delete);
+        std::for_each(del_index.begin(), del_index.end(),[&](int &a){
+            printf("%i\t ",a);
+        });
         if(!del_index.empty())
         {
-            unsigned char *del_symbol = new unsigned char [packet_length];
-            for(int i=0;i<packet_length;i++)
+            const QCPDataMap *dataMap = ui->customPlot->graph(0)->data();
+            QVector <double> y;
+            for(QMap<double, QCPData>::const_iterator it = dataMap->constBegin();
+                it!=dataMap->constEnd(); ++it)
             {
-                del_symbol[i] = char(nan(""));
+                y.push_back(it.value().value);
             }
-
-            for(std::vector<int>::iterator it = del_index.begin();
-                it!=del_index.end(); ++it)
-            {
-                memcpy(this->packets[*it],del_symbol,packet_length);
-                ui->customPlot->graph(0)->removeData((*it)*packet_length,(*it +1)*packet_length);
-            }
-
+            file->wav_header->convert2data(y);
         }
+        this->plotReplot(del_index);
     }
-    ui->customPlot->replot();
     delete dpd;
 
 

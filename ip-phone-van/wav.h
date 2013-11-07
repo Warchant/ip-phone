@@ -13,7 +13,7 @@
 #include <vector>
 #include <algorithm>
 #include <map>
-
+#include <QVector>
 #include "functions.h"
 
 
@@ -42,6 +42,8 @@ public:
     void setHeader(const std::map<std::string, std::string> &header);
 
     unsigned char *data;
+
+    void convert2data(QVector<double> y);
 
 private:
 

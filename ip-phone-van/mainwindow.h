@@ -49,13 +49,15 @@ private:
 
     AudioIO *file;
 
+
     void plotReplot();
+    void plotReplot(std::vector<int> ignore);
 
     void actionsEnabled(bool state);
 
-    std::vector <unsigned char *> packets;
-
     std::vector<int> randVector(int begin, int end, int amount);
+
+    int  packetLength;
 };
 
 
