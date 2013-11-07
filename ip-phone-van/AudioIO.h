@@ -29,7 +29,6 @@ class AudioIO : public QObject
 private slots:
 
     void handleOutputStateChanged(QAudio::State newState);
-    void handleInputStateChanged(QAudio::State newState);
 
 public:
 

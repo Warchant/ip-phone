@@ -1,6 +1,6 @@
 #include "functions.h"
 
-const std::string int2str(const int &data)
+std::string int2str(const int &data)
 {
     std::ostringstream buffer;
     buffer << data;
@@ -8,7 +8,7 @@ const std::string int2str(const int &data)
 }
 
 
-const int str2int(const std::string &str)
+int str2int(const std::string &str)
 {
     std::istringstream buffer(str);
     int result;

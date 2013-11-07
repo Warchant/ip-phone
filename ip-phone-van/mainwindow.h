@@ -7,11 +7,9 @@
 #include "dialog_info.h"
 #include "dialog_packetdelete.h"
 #include "functions.h"
+#include <math.h>
 
 namespace Ui {
-
-void resetPlayerButtons();
-
 class MainWindow;
 }
 
@@ -55,6 +53,9 @@ private:
 
     void actionsEnabled(bool state);
 
+    std::vector <unsigned char *> packets;
+
+    std::vector<int> randVector(int begin, int end, int amount);
 };
 
 

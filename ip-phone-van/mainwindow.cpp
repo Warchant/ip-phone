@@ -8,14 +8,21 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     this->file = new AudioIO();
     ui->setupUi(this);
-    this->plotSetup();
+    //this->plotSetup();
     this->actionsEnabled(false);
+    ui->customPlot->xAxis->setVisible(false);
+    ui->customPlot->yAxis->setVisible(false);
 }
 
 
 MainWindow::~MainWindow()
 {
     delete ui;
+    for(std::vector<unsigned char *>::iterator it = packets.begin();
+        it!=packets.end(); ++it)
+    {
+        delete *it;
+    }
 }
 
 
@@ -41,13 +48,18 @@ void MainWindow::plotSetup()
     ui->customPlot->axisRect(0)->setRangeDrag(Qt::Horizontal);
     ui->customPlot->axisRect(0)->setRangeZoom(Qt::Horizontal);
     ui->customPlot->xAxis->setLabel("Time, ms");
+    ui->customPlot->yAxis->setLabel("Amplitude");
+    ui->customPlot->setNoAntialiasingOnDrag(true);
+    ui->customPlot->xAxis->setVisible(true);
+    ui->customPlot->yAxis->setVisible(true);
 }
+
 
 void MainWindow::plotReplot()
 {
     std::map <std::string, std::string> wav = file->wav_header->getHeader();
-    int bps = wav.empty()?0: str2int(wav["bitsPerSample"]);
-    int size = wav.empty()?0: str2int(wav["subChunk2Size"]);
+    int     bps = wav.empty()?0: str2int(wav["bitsPerSample"]);
+    int    size = wav.empty()?0: str2int(wav["subChunk2Size"]);
     double time = double(size) / bps;
 
     const unsigned char * data = file->wav_header->data;
@@ -65,6 +77,7 @@ void MainWindow::plotReplot()
     ui->customPlot->replot();
 }
 
+
 void MainWindow::actionsEnabled(bool state)
 {
     // Disabled
@@ -74,8 +87,18 @@ void MainWindow::actionsEnabled(bool state)
     ui->action_packetDelete->setDisabled(!state);
     ui->action_packetRecover->setDisabled(!state);
     ui->action_stop->setDisabled(!state);
-    // Visible
-    ui->action_playpause->setVisible(state);
+    ui->action_playpause->setDisabled(!state);
+}
+
+
+std::vector <int> MainWindow::randVector(int begin, int end, int amount)
+{
+    int length = end - begin;
+    std::vector <int> rnd(length);
+    std::for_each(rnd.begin(),rnd.end(),[&begin](int &a){a = begin++;});
+    std::random_shuffle(rnd.begin(), rnd.end());
+    rnd.resize(amount);
+    return rnd;
 }
 
 
@@ -127,27 +150,50 @@ void MainWindow::on_action_packetDelete_triggered()
 
     Dialog_PacketDelete *dpd = new Dialog_PacketDelete(length,this);
 
-    int    to_delete = 0;
-    int    packet_length = 1;
+    int to_delete     = 0;
+    int packet_length = 1;
 
-    if(dpd->exec())
+    if(dpd->exec()) //show dialog
     {
-        to_delete     = dpd->to_delete;
-        packet_length = dpd->packet_length;
-        // true => pressed ok
-        //if(dpd->accepted)
-        //{
-            /* TODO:
-            int packets_to_loss = str2int(wav["subChunk2Size"]) * loss_rate;
-            for(int i=0; i<packets_to_loss; i++)
-            {
-                file->wav_header->data[rand()%]
-            }
-            */
-        //}
+        to_delete     = dpd->to_delete;         // amount of packets to delete
+        packet_length = dpd->packet_length;     // packet size in bytes
+        int size      = length/packet_length;   // size of new array: data divided into packets
 
-        delete dpd;
+        this->packets.resize(size);
+        for(int i=0; i<size; i++)
+        {
+            this->packets[i] = new unsigned char[packet_length];
+            unsigned char *c = new unsigned char[packet_length];
+            for(int j=0; j<packet_length; j++)
+            {
+                c[j] = file->wav_header->data[i*packet_length + j];
+            }
+            memcpy(this->packets[i],c, packet_length);
+            delete [] c;
+        }
+
+        std::vector <int> del_index = randVector(0,size,to_delete);
+        if(!del_index.empty())
+        {
+            unsigned char *del_symbol = new unsigned char [packet_length];
+            for(int i=0;i<packet_length;i++)
+            {
+                del_symbol[i] = char(nan(""));
+            }
+
+            for(std::vector<int>::iterator it = del_index.begin();
+                it!=del_index.end(); ++it)
+            {
+                memcpy(this->packets[*it],del_symbol,packet_length);
+                ui->customPlot->graph(0)->removeData((*it)*packet_length,(*it +1)*packet_length);
+            }
+
+        }
     }
+    ui->customPlot->replot();
+    delete dpd;
+
+
 }
 
 
@@ -157,8 +203,9 @@ void MainWindow::on_action_new_triggered()
     file->wav_header = new WAV();
     setWindowTitle("Waver");
     this->actionsEnabled(false);
-    this->plotReplot();
-
+    ui->customPlot->xAxis->setVisible(false);
+    ui->customPlot->yAxis->setVisible(false);
+    ui->customPlot->removePlottable(0);
 }
 
 

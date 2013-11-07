@@ -37,5 +37,7 @@ FORMS    += mainwindow.ui \
 
 OTHER_FILES +=
 
+CONFIG += c++11
+
 RESOURCES += \
     recources.qrc
