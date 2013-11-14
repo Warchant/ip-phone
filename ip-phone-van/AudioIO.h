@@ -14,10 +14,13 @@
 #include <QtMultimedia/QAudioOutput>
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QDataStream>
 #include <QObject>
+#include <QBuffer>
 #include <QFile>
 #include <string>
 #include "wav.h"
+#include <fstream>
 
 /**
  * @class AudioIO
@@ -56,9 +59,8 @@ public:
 
 private:
 
-    QAudioOutput* out;
 
-    void addWavHeader();
+    QAudioOutput* out;
 
     std::string path;
 

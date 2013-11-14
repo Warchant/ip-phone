@@ -37,7 +37,7 @@ void MainWindow::plotSetup()
     }
 
     // Set ranges to top and bottom axis
-    ui->customPlot->yAxis->setRange(min-1,max+1);
+    ui->customPlot->yAxis->setRange(min-2 <= 0?min:min-2,max+5);
     ui->customPlot->xAxis->setRange(0, time);
     ui->customPlot->setInteractions( QCP::iRangeDrag | QCP::iRangeZoom );
     ui->customPlot->axisRect(0)->setRangeDrag(Qt::Horizontal);
@@ -56,7 +56,7 @@ void MainWindow::plotReplot()
 }
 
 
-void MainWindow::plotReplot(std::vector <int> ignore)
+void MainWindow::plotReplot(std::vector <int> index_ignore)
 {
     std::map <std::string, std::string> wav = file->wav_header->getHeader();
     int     bps = wav.empty()?0: str2int(wav["bitsPerSample"]);
@@ -71,17 +71,20 @@ void MainWindow::plotReplot(std::vector <int> ignore)
         x[i] = time*(double(i)/(size-1)); 
         y[i] = double(data[i]);
     }
-    if(!ignore.empty())
+
+    if(!index_ignore.empty())
     {
-        int mean = std::accumulate(y.begin(), y.end(), 0.0) / y.size();
-        for (int i=0; i<ignore.size();i++ )
+        int placeholder = 0;
+        for (unsigned int i=0; i<index_ignore.size();i++ )
         {
             for(int j=0; j<this->packetLength; j++)
             {
-                y[ignore[i]*this->packetLength + j] = mean ;
+                int index = index_ignore[i]*this->packetLength + j;
+                y[index] = placeholder ;
             }
         }
     }
+
     this->plotSetup();
     ui->customPlot->addGraph();
     ui->customPlot->graph(0)->setData(x,y);
@@ -175,11 +178,10 @@ void MainWindow::on_action_packetDelete_triggered()
         int size      = length/packet_length;   // size of new array: data divided into packets
 
         std::vector <int> del_index = randVector(0,size,to_delete);
-        std::for_each(del_index.begin(), del_index.end(),[&](int &a){
-            printf("%i\t ",a);
-        });
+
         if(!del_index.empty())
         {
+            this->plotReplot(del_index);
             const QCPDataMap *dataMap = ui->customPlot->graph(0)->data();
             QVector <double> y;
             for(QMap<double, QCPData>::const_iterator it = dataMap->constBegin();
@@ -189,7 +191,6 @@ void MainWindow::on_action_packetDelete_triggered()
             }
             file->wav_header->convert2data(y);
         }
-        this->plotReplot(del_index);
     }
     delete dpd;
 
@@ -203,6 +204,7 @@ void MainWindow::on_action_new_triggered()
     file->wav_header = new WAV();
     setWindowTitle("Waver");
     this->actionsEnabled(false);
+    this->plotReplot();
     ui->customPlot->xAxis->setVisible(false);
     ui->customPlot->yAxis->setVisible(false);
     ui->customPlot->removePlottable(0);
@@ -220,13 +222,11 @@ void MainWindow::on_action_playpause_triggered(bool checked)
     if(checked)
     {
         file->startPlayback();
-        ui->action_playpause->setIcon(QIcon(":/recources/buttons/buttonPause.png"));
     }
     else
     {
         if(file->isOpen())
             file->pausePlayback();
-        ui->action_playpause->setIcon(QIcon(":/recources/buttons/buttonPlay.png"));
     }
 }
 

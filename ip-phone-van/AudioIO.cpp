@@ -23,13 +23,37 @@ std::string AudioIO::getPath() const
     return path;
 }
 
-
+/*
+ * TODO:
+ * make read from buffer
+ */
+#define TEMP_PATH "./temp"
 void AudioIO::setPath(const std::string &value)
 {
     delete this->wav_header;
     path = value;
     this->wav_header = new WAV(this->path);
+
+    this->sourceFile.setFileName(TEMP_PATH);
+    this->sourceFile.remove();
+
     this->sourceFile.setFileName(value.c_str());
+
+    if(!this->sourceFile.copy(TEMP_PATH))
+    {
+        QMessageBox warning;
+        warning.setText(tr("Не могу создать временный WAV файл в папке с программой. Проверьте права доступа."));
+        warning.exec();
+
+        delete this->wav_header;
+        this->wav_header = new WAV();
+
+        return;
+    }
+    else
+    {
+        this->sourceFile.setFileName(TEMP_PATH);
+    }
 
     std::map<std::string,std::string> wav = wav_header->getHeader();
     // Set up the format, eg.
@@ -45,7 +69,7 @@ void AudioIO::setPath(const std::string &value)
     QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
     if (!info.isFormatSupported(format)) {
       QMessageBox warning;
-      warning.setText(tr("Raw audio format not supported by backend, cannot play audio."));
+      warning.setText(tr("WAV audio format not supported by backend, cannot play audio."));
       warning.exec();
 
       delete this->wav_header;

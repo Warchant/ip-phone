@@ -7,7 +7,7 @@
 
 #include "WAV.h"
 
-WAV::WAV(std::string path)
+WAV::WAV(std::string path) : header_size(sizeof(HEADER))
 {
     this->state = false;
     p_header = new HEADER();
@@ -38,7 +38,7 @@ WAV::WAV(std::string path)
     }
 }
 
-WAV::WAV()
+WAV::WAV() : header_size(sizeof(HEADER))
 {
     this->p_header = new HEADER();
 }
@@ -54,16 +54,6 @@ const unsigned char *WAV::getOriginalData() const
 {
     return this->original_data;
 }
-
-/*
- * TODO
- */
-/*
-void WAV::setHeader(const std::map<std::string, std::string> &header)
-{
-
-}
-*/
 
 
 void WAV::fillHeaderData()
@@ -182,4 +172,9 @@ void WAV::convert2data(QVector<double> y)
     {
         this->data[i] = (unsigned char)(y[i]);
     }
+}
+
+const int WAV::getHeaderSize()
+{
+    return this->header_size;
 }

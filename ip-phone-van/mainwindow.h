@@ -51,7 +51,7 @@ private:
 
 
     void plotReplot();
-    void plotReplot(std::vector<int> ignore);
+    void plotReplot(std::vector<int> index_ignore);
 
     void actionsEnabled(bool state);
 
