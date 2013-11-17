@@ -63,18 +63,20 @@ void MainWindow::plotReplot(std::vector <int> index_ignore)
     int    size = wav.empty()?0: str2int(wav["subChunk2Size"]);
     double time = double(size) / bps;
 
-    const unsigned char * data = file->wav_header->data;
+    unsigned char * data = file->wav_header->data;
 
     QVector<double> x(size), y(size);
     for (int i=0; i<size; i++)
     {
         x[i] = time*(double(i)/(size-1)); 
         y[i] = double(data[i]);
+        data[i] = data[i]==0?1:data[i];
     }
+    data[size-1] = 0; // stop sybmol
 
     if(!index_ignore.empty())
     {
-        int placeholder = 0;
+        int placeholder = 1;
         for (unsigned int i=0; i<index_ignore.size();i++ )
         {
             for(int j=0; j<this->packetLength; j++)
@@ -177,7 +179,7 @@ void MainWindow::on_action_packetDelete_triggered()
         this->packetLength = packet_length;
         int size      = length/packet_length;   // size of new array: data divided into packets
 
-        std::vector <int> del_index = randVector(0,size,to_delete);
+        del_index = randVector(0,size,to_delete);
 
         if(!del_index.empty())
         {

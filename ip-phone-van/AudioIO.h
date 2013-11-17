@@ -59,6 +59,7 @@ public:
 
 private:
 
+    QBuffer *buffer;
 
     QAudioOutput* out;
 

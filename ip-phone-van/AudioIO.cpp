@@ -9,11 +9,13 @@
 
 AudioIO::AudioIO(){
     this->wav_header = new WAV();
+    this->buffer     = new QBuffer(this);
 }
 
 
 AudioIO::~AudioIO(){
     delete this->wav_header;
+    delete this->buffer;
     sourceFile.close();
 }
 
@@ -23,42 +25,19 @@ std::string AudioIO::getPath() const
     return path;
 }
 
-/*
- * TODO:
- * make read from buffer
- */
-#define TEMP_PATH "./temp"
+
 void AudioIO::setPath(const std::string &value)
 {
     delete this->wav_header;
     path = value;
     this->wav_header = new WAV(this->path);
 
-    this->sourceFile.setFileName(TEMP_PATH);
-    this->sourceFile.remove();
-
-    this->sourceFile.setFileName(value.c_str());
-
-    if(!this->sourceFile.copy(TEMP_PATH))
-    {
-        QMessageBox warning;
-        warning.setText(tr("Не могу создать временный WAV файл в папке с программой. Проверьте права доступа."));
-        warning.exec();
-
-        delete this->wav_header;
-        this->wav_header = new WAV();
-
-        return;
-    }
-    else
-    {
-        this->sourceFile.setFileName(TEMP_PATH);
-    }
+    this->sourceFile.setFileName(this->path.c_str());
 
     std::map<std::string,std::string> wav = wav_header->getHeader();
-    // Set up the format, eg.
-    int bps = str2int(wav["bitsPerSample"]);
 
+    int bps = str2int(wav["bitsPerSample"]);
+    // Set up the format, eg.
     format.setSampleRate  ( str2int(wav["sampleRate"]) );
     format.setChannelCount( str2int(wav["numChannels"]) );
     format.setSampleSize  ( bps );
@@ -86,10 +65,13 @@ void AudioIO::pausePlayback(){
 
 
 void AudioIO::startPlayback(){
-    if(!sourceFile.isOpen())
-        sourceFile.open(QIODevice::ReadOnly);
+    delete this->buffer;
+    this->buffer = new QBuffer(new QByteArray((const char *)this->wav_header->data));
+
+    if(!buffer->isOpen())
+        buffer->open(QIODevice::ReadOnly);
     out = new QAudioOutput(format, this);
-    out->start(&sourceFile);
+    out->start(buffer);
     connect(out, SIGNAL(stateChanged(QAudio::State)), SLOT(handleOutputStateChanged(QAudio::State)));
 }
 
@@ -97,13 +79,13 @@ void AudioIO::startPlayback(){
 void AudioIO::stopPlayback(){
     pausePlayback();
     delete out;
-    sourceFile.close();
+    buffer->close();
 }
 
 
 bool AudioIO::isOpen()
 {
-    return sourceFile.isOpen();
+    return buffer->isOpen();
 }
 
 

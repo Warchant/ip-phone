@@ -58,6 +58,8 @@ private:
     std::vector<int> randVector(int begin, int end, int amount);
 
     int  packetLength;
+
+    std::vector<int> del_index;
 };
 
 
