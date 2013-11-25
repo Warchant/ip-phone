@@ -44,39 +44,38 @@ void RepairAlgorithm::setPacketsAmount(int size)
 }
 
 // +
-void RepairAlgorithm::splicing()
+void RepairAlgorithm::cleanBeforeFirst()
 {
-    /* NOT COMPLETED ALGO
-    int packet_length = container->getPacketLength();
-    unsigned char * zero_packet = new unsigned char [packet_length];
-
-    for(int i=0; i<packet_length;i++)
+    int offset = 0;
+    bool finded = false;
+    for(int i=0; i<sizeinbytes; i++)
     {
-        zero_packet[i] = 0;
-    }
-
-    int offset = 1;
-    for(int i=0; i < this->sizeinpackets; i++)
-    {
-        if(container->isDeleted(i))
+        if(!finded)
         {
-            while(container->isDeleted(i+offset) && (i+offset) < this->sizeinpackets)
+            while(container->data[i+offset] == PLACEHOLDER && i+offset < sizeinbytes)
             {
                 offset++;
             }
-            container->replacePacket(i,container->getPacket(i+offset));
-            container->replacePacket(i+offset,zero_packet);
+            finded = true;
         }
         else
         {
-            continue;
+            if(i+offset < sizeinbytes)
+            {
+                container->data[i] = container->data[i+offset];
+            }
+            else
+            {
+                container->data[i] = 0;
+            }
         }
+
     }
+}
 
-    delete zero_packet;
-    */
-
-    // COMPLETED ALGO
+// +
+void RepairAlgorithm::splicing()
+{
     int offset = 0;
     for(int i=0; i<this->sizeinbytes; i++)
     {
@@ -117,3 +116,56 @@ void RepairAlgorithm::silenceSubstitution()
         }
     }
 }
+
+// +
+void RepairAlgorithm::noiseSubstitution()
+{
+    this->cleanBeforeFirst();
+    int packet_length = container->getPacketLength();
+    int last_correct;
+    int mean;
+    int variance;
+    int max;
+    for(int i=0; i<sizeinpackets && container->data[i*packet_length]!=0; i++)
+    {
+        if(!container->isDeleted(i))
+        {
+            last_correct = i;
+
+            // calculate mean and max
+            mean = 0;
+            max  = 0;
+            for(int j=0;j<packet_length;j++)
+            {
+                int el = int(container->data[last_correct*packet_length + j]);
+                mean+= el;
+                max = max < el ? el : max;
+            }
+            mean/=packet_length;
+
+            // calculate variance
+            variance = (max - mean)/2;
+        }
+        // generate randn noise
+        std::default_random_engine generator;
+        std::normal_distribution<double> randn(mean, variance);
+
+        if(container->isDeleted(i))
+        {
+            for(int j=0; j<packet_length; j++)
+            {
+                int randn_number = randn(generator);
+                container->data[i*packet_length + j] = randn_number >= 2 && randn_number <=255 ?
+                            randn_number : mean;
+            }
+        }
+    }
+}
+
+
+void RepairAlgorithm::packetRepetition()
+{
+    this->cleanBeforeFirst();
+    // TODO
+}
+

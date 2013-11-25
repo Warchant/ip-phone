@@ -11,6 +11,7 @@
 #include "packets.h"
 #include <vector>
 #include <algorithm>
+#include <random>
 
 /**
  * @brief The RepairAlgorithm class
@@ -26,14 +27,24 @@ public:
     void setData(unsigned char * d);
     void setPacketLength(int length);
     void setPacketsAmount(int size);
+
+    void cleanBeforeFirst();
     /**
-     * @brief Splicing: 111_222 => 111222
+     * @brief splicing: 111___222 => 111222
      */
     void splicing();
     /**
      * @brief silenceSubstitution: 111___333 => 111222333
      */
     void silenceSubstitution();
+    /**
+     * @brief noiseSubstitution: 111___333 => 111231333
+     */
+    void noiseSubstitution();
+    /**
+     * @brief packetRepetition: 111___333 => 111111333
+     */
+    void packetRepetition();
 
     Packets* container;
 

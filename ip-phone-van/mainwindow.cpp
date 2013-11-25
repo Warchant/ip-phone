@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#define PLACEHOLDER 1
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -75,17 +76,17 @@ void MainWindow::plotReplot(std::vector <int> index_ignore)
         y[i] = double(data[i]);
         data[i] = data[i]==0?1:data[i];
     }
-    data[size-1] = 0; // stop sybmol
+    if(size>0)
+        data[size-1] = 0; // stop sybmol
 
     if(!index_ignore.empty())
     {
-        int placeholder = 1;
         for (unsigned int i=0; i<index_ignore.size();i++ )
         {
             for(int j=0; j<this->packetLength; j++)
             {
                 int index = index_ignore[i]*this->packetLength + j;
-                y[index] = placeholder ;
+                y[index] = PLACEHOLDER ;
             }
         }
     }
@@ -145,6 +146,8 @@ void MainWindow::on_action_open_triggered()
         int size = str2int(wav["subChunk2Size"]);
         this->algorithms = new RepairAlgorithm(size);
         this->algorithms->setData(file->wav_header->data);
+
+        ui->action_packetRecover->setEnabled(false);
     }
 }
 
@@ -205,9 +208,10 @@ void MainWindow::on_action_packetDelete_triggered()
             }
             file->wav_header->convert2data(y);
         }
+        if(to_delete > 0)
+            ui->action_packetRecover->setEnabled(true);
     }
     delete dpd;
-
 
 }
 
@@ -256,6 +260,6 @@ void MainWindow::on_action_stop_triggered()
 
 void MainWindow::on_action_packetRecover_triggered()
 {
-    algorithms->silenceSubstitution();
+    algorithms->noiseSubstitution();
     this->plotReplot();
 }
