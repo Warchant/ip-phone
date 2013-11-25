@@ -7,6 +7,8 @@
 #include "dialog_info.h"
 #include "dialog_packetdelete.h"
 #include "functions.h"
+#include "packets.h"
+#include "RepairAlgorithm.h"
 #include <math.h>
 
 namespace Ui {
@@ -39,6 +41,8 @@ private slots:
 
     void on_action_stop_triggered();
 
+    void on_action_packetRecover_triggered();
+
 private:
 
     Ui::MainWindow *ui;
@@ -60,6 +64,8 @@ private:
     int  packetLength;
 
     std::vector<int> del_index;
+
+    RepairAlgorithm *algorithms;
 };
 
 

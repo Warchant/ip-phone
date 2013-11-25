@@ -12,11 +12,14 @@ MainWindow::MainWindow(QWidget *parent) :
     this->actionsEnabled(false);
     ui->customPlot->xAxis->setVisible(false);
     ui->customPlot->yAxis->setVisible(false);
+
+    this->algorithms = new RepairAlgorithm(0);
 }
 
 
 MainWindow::~MainWindow()
 {
+    delete algorithms;
     delete ui;
 }
 
@@ -136,6 +139,12 @@ void MainWindow::on_action_open_triggered()
         this->plotReplot();
         setWindowTitle("Waver (" + path + ")");
         this->actionsEnabled(true);
+
+        delete this->algorithms;
+        std::map<std::string,std::string> wav = file->wav_header->getHeader();
+        int size = str2int(wav["subChunk2Size"]);
+        this->algorithms = new RepairAlgorithm(size);
+        this->algorithms->setData(file->wav_header->data);
     }
 }
 
@@ -178,6 +187,9 @@ void MainWindow::on_action_packetDelete_triggered()
         packet_length = dpd->packet_length;     // packet size in bytes
         this->packetLength = packet_length;
         int size      = length/packet_length;   // size of new array: data divided into packets
+
+        algorithms->setPacketsAmount(size);
+        algorithms->container->createPackets(packet_length); // create packets from bytes
 
         del_index = randVector(0,size,to_delete);
 
@@ -240,4 +252,10 @@ void MainWindow::on_action_stop_triggered()
     {
         file->stopPlayback();
     }
+}
+
+void MainWindow::on_action_packetRecover_triggered()
+{
+    algorithms->silenceSubstitution();
+    this->plotReplot();
 }
