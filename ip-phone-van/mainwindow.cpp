@@ -317,6 +317,7 @@ void MainWindow::on_action_packetRecover_triggered()
 
         std::for_each(lengths.begin(),lengths.end(),[&](int el){printf("%i\t",el);});
         this->packetLength = *std::min_element(lengths.begin(),lengths.end());
+        this->packetLength = this->packetLength == 0 ? 1 : this->packetLength;
 
         // create packets
         algorithms->setPacketsAmount(sizeinbytes/this->packetLength);
