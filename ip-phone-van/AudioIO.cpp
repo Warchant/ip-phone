@@ -72,7 +72,6 @@ void AudioIO::startPlayback(){
         buffer->open(QIODevice::ReadOnly);
     out = new QAudioOutput(format, this);
     out->start(buffer);
-    connect(out, SIGNAL(stateChanged(QAudio::State)), SLOT(handleOutputStateChanged(QAudio::State)));
 }
 
 
@@ -89,26 +88,8 @@ bool AudioIO::isOpen()
 }
 
 
-/*
- * TODO
- */
-void AudioIO::handleOutputStateChanged(QAudio::State newState)
+bool AudioIO::copyFileTo(std::string newpath)
 {
-    switch (newState) {
-        case QAudio::IdleState:
-            // Finished playing (no more data)
-            stopPlayback();
-            break;
-
-        case QAudio::StoppedState:
-            // Stopped for other reasons
-            if (out->error() != QAudio::NoError) {
-                // Error handling
-            }
-            break;
-
-        default:
-            // ... other cases as appropriate
-            break;
-    }
+    return sourceFile.copy(newpath.c_str());
 }
+

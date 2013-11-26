@@ -125,7 +125,6 @@ void RepairAlgorithm::noiseSubstitution()
     int last_correct;
     int mean;
     int variance;
-    int max;
     for(int i=0; i<sizeinpackets && container->data[i*packet_length]!=0; i++)
     {
         if(!container->isDeleted(i))
@@ -134,24 +133,28 @@ void RepairAlgorithm::noiseSubstitution()
 
             // calculate mean and max
             mean = 0;
-            max  = 0;
             for(int j=0;j<packet_length;j++)
             {
                 int el = int(container->data[last_correct*packet_length + j]);
                 mean+= el;
-                max = max < el ? el : max;
             }
             mean/=packet_length;
 
             // calculate variance
-            variance = (max - mean)/2;
+            variance = 0;
+            for(int j=0;j<packet_length;j++)
+            {
+                int el = int(container->data[last_correct*packet_length + j]);
+                variance+=(el-mean)*(el-mean);
+            }
+            variance /= (packet_length - 1);
+            variance = pow(variance, 0.5);
         }
-        // generate randn noise
-        std::default_random_engine generator;
-        std::normal_distribution<double> randn(mean, variance);
-
-        if(container->isDeleted(i))
+        else
         {
+            // generate randn noise
+            std::default_random_engine generator;
+            std::normal_distribution<double> randn(mean, variance);
             for(int j=0; j<packet_length; j++)
             {
                 int randn_number = randn(generator);
@@ -166,6 +169,18 @@ void RepairAlgorithm::noiseSubstitution()
 void RepairAlgorithm::packetRepetition()
 {
     this->cleanBeforeFirst();
-    // TODO
+    int packet_length = container->getPacketLength();
+    int last_correct = 0;
+    for(int i=0; i<sizeinpackets && container->data[i*packet_length]!=0; i++)
+    {
+        if(!container->isDeleted(i))
+        {
+            last_correct = i;
+        }
+        else
+        {
+            container->replacePacket(i,container->getPacket(last_correct));
+        }
+    }
 }
 

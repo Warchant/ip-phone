@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 
 #define PLACEHOLDER 1
+#define STOP_SYMBOL 0
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -14,7 +15,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->customPlot->xAxis->setVisible(false);
     ui->customPlot->yAxis->setVisible(false);
 
-    this->algorithms = new RepairAlgorithm(0);
+    this->algorithms   = new RepairAlgorithm(0);
+    this->packetLength = 0;
 }
 
 
@@ -74,10 +76,11 @@ void MainWindow::plotReplot(std::vector <int> index_ignore)
     {
         x[i] = time*(double(i)/(size-1)); 
         y[i] = double(data[i]);
-        data[i] = data[i]==0?1:data[i];
+        data[i] = data[i]==STOP_SYMBOL ?2:data[i];
     }
+
     if(size>0)
-        data[size-1] = 0; // stop sybmol
+        data[size] = STOP_SYMBOL; // stop sybmol
 
     if(!index_ignore.empty())
     {
@@ -125,6 +128,26 @@ std::vector <int> MainWindow::randVector(int begin, int end, int amount)
 }
 
 
+bool MainWindow::saveFile(std::string path)
+{
+    QFile f(path.c_str());
+
+    if (!f.open(QIODevice::ReadWrite))
+        return false;
+
+    if(f.seek(file->wav_header->getHeaderSize()))
+    {
+        f.write((const char*)file->wav_header->data, sizeinbytes);
+    }
+    else
+    {
+        return false;
+    }
+    f.close();
+    return true;
+}
+
+
 void MainWindow::on_action_open_triggered()
 {
     QFileDialog dialog(this);
@@ -146,8 +169,6 @@ void MainWindow::on_action_open_triggered()
         int size = str2int(wav["subChunk2Size"]);
         this->algorithms = new RepairAlgorithm(size);
         this->algorithms->setData(file->wav_header->data);
-
-        ui->action_packetRecover->setEnabled(false);
     }
 }
 
@@ -177,22 +198,22 @@ void MainWindow::on_action_packetDelete_triggered()
     if(wav.empty())
         return;
 
-    int length = str2int(wav["subChunk2Size"]);
+    this->sizeinbytes = str2int(wav["subChunk2Size"]);;
 
-    Dialog_PacketDelete *dpd = new Dialog_PacketDelete(length,this);
+    Dialog_PacketDelete *dpd = new Dialog_PacketDelete(sizeinbytes,this);
 
     int to_delete     = 0;
     int packet_length = 1;
 
     if(dpd->exec()) //show dialog
     {
-        to_delete     = dpd->to_delete;         // amount of packets to delete
-        packet_length = dpd->packet_length;     // packet size in bytes
+        to_delete          = dpd->to_delete;         // amount of packets to delete
+        packet_length      = dpd->packet_length;     // packet size in bytes
         this->packetLength = packet_length;
-        int size      = length/packet_length;   // size of new array: data divided into packets
+        int size           = sizeinbytes/packet_length;   // size of new array: data divided into packets
 
         algorithms->setPacketsAmount(size);
-        algorithms->container->createPackets(packet_length); // create packets from bytes
+        algorithms->container->createPackets(this->packetLength); // create packets from bytes
 
         del_index = randVector(0,size,to_delete);
 
@@ -208,11 +229,15 @@ void MainWindow::on_action_packetDelete_triggered()
             }
             file->wav_header->convert2data(y);
         }
+
         if(to_delete > 0)
-            ui->action_packetRecover->setEnabled(true);
+        {
+            setWindowTitle(windowTitle() + "*");
+        }
+
+
     }
     delete dpd;
-
 }
 
 
@@ -231,21 +256,19 @@ void MainWindow::on_action_new_triggered()
 
 void MainWindow::on_action_save_triggered()
 {
-
+    setWindowTitle(windowTitle().remove("*"));
+    if(!this->saveFile(file->getPath()))
+    {
+        QMessageBox warning;
+        warning.setText(tr("Не удалось сохранить файл. Возможно, нет доступа к папке."));
+        warning.exec();
+    }
 }
 
 
-void MainWindow::on_action_playpause_triggered(bool checked)
+void MainWindow::on_action_playpause_triggered()
 {
-    if(checked)
-    {
-        file->startPlayback();
-    }
-    else
-    {
-        if(file->isOpen())
-            file->pausePlayback();
-    }
+    file->startPlayback();
 }
 
 
@@ -260,6 +283,84 @@ void MainWindow::on_action_stop_triggered()
 
 void MainWindow::on_action_packetRecover_triggered()
 {
-    algorithms->noiseSubstitution();
-    this->plotReplot();
+    if(this->packetLength == 0)
+    {
+        std::map<std::string,std::string> wav = file->wav_header->getHeader();
+
+        if(wav.empty())
+            return;
+
+        this->sizeinbytes = str2int(wav["subChunk2Size"]);
+
+        // calculate packet length
+        std::vector <int> lengths;
+        int k = 0;
+        lengths.push_back(0);
+        for(int i=0; i<sizeinbytes; i++)
+        {
+            if(file->wav_header->data[i] == PLACEHOLDER)
+            {
+                lengths[k]++;
+            }
+            else
+            {
+                lengths.push_back(0);
+                k++;
+            }
+        }
+
+        lengths.erase(
+                    std::remove_if(lengths.begin(),
+                                   lengths.end(),
+                                   [](int el){return el<=1;}
+        ), lengths.end());
+
+        std::for_each(lengths.begin(),lengths.end(),[&](int el){printf("%i\t",el);});
+        this->packetLength = *std::min_element(lengths.begin(),lengths.end());
+
+        // create packets
+        algorithms->setPacketsAmount(sizeinbytes/this->packetLength);
+        algorithms->container->createPackets(this->packetLength); // create packets from bytes
+    }
+
+    Dialog_PacketRecovery *dpr = new Dialog_PacketRecovery(this);
+    if(dpr->exec())
+    {
+        switch(dpr->getAlgorithm())
+        {
+            case 0:
+            {
+                for(int i=0; i<this->sizeinbytes; i++)
+                {
+                    file->wav_header->data[i] = file->wav_header->getOriginalData()[i];
+                }
+            }break;
+            case 1: algorithms->splicing(); break;
+            case 2: algorithms->silenceSubstitution(); break;
+            case 3: algorithms->noiseSubstitution(); break;
+            case 4: algorithms->packetRepetition(); break;
+        }
+        this->plotReplot();
+    }
+    delete dpr;
+}
+
+
+void MainWindow::on_action_saveas_triggered()
+{
+    QFileDialog *fdi = new QFileDialog(this);
+    fdi->setNameFilter(tr("WAV files (*.wav)"));
+    fdi->setAcceptMode(QFileDialog::AcceptSave);
+    if(fdi->exec())
+    {
+        QString path = fdi->selectedFiles().at(0);
+        file->copyFileTo(path.toStdString());
+        if(!this->saveFile(path.toStdString()))
+        {
+            QMessageBox warning;
+            warning.setText(tr("Не удалось сохранить файл. Возможно, нет доступа к папке."));
+            warning.exec();
+        }
+        setWindowTitle("Waver (" + path + ")");
+    }
 }

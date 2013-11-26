@@ -29,10 +29,6 @@ class AudioIO : public QObject
 {
     Q_OBJECT
 
-private slots:
-
-    void handleOutputStateChanged(QAudio::State newState);
-
 public:
 
     AudioIO();
@@ -56,6 +52,8 @@ public:
     void stopPlayback ();
 
     bool isOpen();
+
+    bool copyFileTo(std::string newpath);
 
 private:
 

@@ -9,6 +9,7 @@
 #include "functions.h"
 #include "packets.h"
 #include "RepairAlgorithm.h"
+#include "dialog_packetrecovery.h"
 #include <math.h>
 
 namespace Ui {
@@ -37,11 +38,13 @@ private slots:
 
     void on_action_save_triggered();
 
-    void on_action_playpause_triggered(bool checked);
+    void on_action_playpause_triggered();
 
     void on_action_stop_triggered();
 
     void on_action_packetRecover_triggered();
+
+    void on_action_saveas_triggered();
 
 private:
 
@@ -62,10 +65,17 @@ private:
     std::vector<int> randVector(int begin, int end, int amount);
 
     int  packetLength;
+    int  sizeinbytes;
 
     std::vector<int> del_index;
 
     RepairAlgorithm *algorithms;
+    /**
+     * @brief saveFile
+     * @param path
+     * @return Saving state.
+     */
+    bool saveFile(std::string path);
 };
 
 

@@ -174,7 +174,7 @@ void WAV::convert2data(QVector<double> y)
     }
 }
 
-const int WAV::getHeaderSize()
+int WAV::getHeaderSize()
 {
     return this->header_size;
 }
