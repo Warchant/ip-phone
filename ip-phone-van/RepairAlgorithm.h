@@ -49,6 +49,9 @@ public:
     Packets* container;
 
 private:
+
+    RepairAlgorithm(const &RepairAlgorithm);
+
     int sizeinbytes;
     int sizeinpackets;
     std::vector<int> del_index;

@@ -24,7 +24,6 @@ public:
     packet getPacket(int number);
 
     int getPacketLength() const;
-    int getSize() const;
     void setData(packet data);
 
     packet data;

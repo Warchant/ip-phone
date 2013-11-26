@@ -11,31 +11,7 @@ WAV::WAV(std::string path) : header_size(sizeof(HEADER))
 {
     this->state = false;
     p_header = new HEADER();
-    try
-    {
-        this->open(path);
-    }
-    catch (WAV::EXCEPTION &e)
-    {
-        switch(e)
-        {
-            case FILE_MISSING:
-            {
-                printf("wav file is missing\n");
-                break;
-            }
-            case FILE_BAD_HEADER:
-            {
-                printf("it is not wav file\n");
-                break;
-            }
-            case FILE_DATA_LOAD_FAIL:
-            {
-                printf("cant't load file data\n");
-                break;
-            }
-        }
-    }
+    this->open(path);
 }
 
 WAV::WAV() : header_size(sizeof(HEADER))

@@ -202,20 +202,15 @@ void MainWindow::on_action_packetDelete_triggered()
 
     Dialog_PacketDelete *dpd = new Dialog_PacketDelete(sizeinbytes,this);
 
-    int to_delete     = 0;
-    int packet_length = 1;
-
     if(dpd->exec()) //show dialog
     {
-        to_delete          = dpd->to_delete;         // amount of packets to delete
-        packet_length      = dpd->packet_length;     // packet size in bytes
-        this->packetLength = packet_length;
+        this->packetLength = dpd->packet_length;
         int size           = sizeinbytes/packet_length;   // size of new array: data divided into packets
 
         algorithms->setPacketsAmount(size);
         algorithms->container->createPackets(this->packetLength); // create packets from bytes
 
-        del_index = randVector(0,size,to_delete);
+        del_index = randVector(0,size,dpd->to_delete);
 
         if(!del_index.empty())
         {
@@ -230,7 +225,7 @@ void MainWindow::on_action_packetDelete_triggered()
             file->wav_header->convert2data(y);
         }
 
-        if(to_delete > 0)
+        if(dpd->to_delete > 0)
         {
             setWindowTitle(windowTitle() + "*");
         }
