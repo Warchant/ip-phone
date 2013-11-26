@@ -123,8 +123,8 @@ void RepairAlgorithm::noiseSubstitution()
     this->cleanBeforeFirst();
     int packet_length = container->getPacketLength();
     int last_correct;
-    int mean;
-    int variance;
+    int mean     = 0;
+    int variance = 0;
     for(int i=0; i<sizeinpackets && container->data[i*packet_length]!=0; i++)
     {
         if(!container->isDeleted(i))

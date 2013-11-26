@@ -205,7 +205,7 @@ void MainWindow::on_action_packetDelete_triggered()
     if(dpd->exec()) //show dialog
     {
         this->packetLength = dpd->packet_length;
-        int size           = sizeinbytes/packet_length;   // size of new array: data divided into packets
+        int size           = sizeinbytes/this->packetLength;   // size of new array: data divided into packets
 
         algorithms->setPacketsAmount(size);
         algorithms->container->createPackets(this->packetLength); // create packets from bytes
