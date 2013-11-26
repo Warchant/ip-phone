@@ -268,6 +268,8 @@ void MainWindow::on_action_save_triggered()
 
 void MainWindow::on_action_playpause_triggered()
 {
+    if(file->isOpen())
+        file->pausePlayback();
     file->startPlayback();
 }
 
