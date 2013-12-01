@@ -15,5 +15,7 @@
         <file>recources/buttons/buttonRec.png</file>
         <file>recources/images/imageScience.png</file>
         <file>recources/actions/actionInfo.png</file>
+        <file>recources/actions/actionInfo2.png</file>
+        <file>recources/actions/File-WAV-icon.png</file>
     </qresource>
 </RCC>

@@ -27,7 +27,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="recources.qrc">
-    <normaloff>:/recources/actions/actionInfo.png</normaloff>:/recources/actions/actionInfo.png</iconset>
+    <normaloff>:/recources/actions/File-WAV-icon.png</normaloff>:/recources/actions/File-WAV-icon.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="1" column="0">

@@ -60,6 +60,7 @@
     <addaction name="action_info"/>
     <addaction name="action_packetDelete"/>
     <addaction name="action_packetRecover"/>
+    <addaction name="action_noiseinfo"/>
    </widget>
    <widget class="QMenu" name="menu_2">
     <property name="title">
@@ -72,7 +73,6 @@
    <addaction name="menu_2"/>
    <addaction name="menu"/>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
   <widget class="QToolBar" name="toolBar">
    <property name="windowTitle">
     <string>Панель инструментов</string>
@@ -106,6 +106,7 @@
    <addaction name="action_info"/>
    <addaction name="action_packetDelete"/>
    <addaction name="action_packetRecover"/>
+   <addaction name="action_noiseinfo"/>
   </widget>
   <action name="action_new">
    <property name="icon">
@@ -176,7 +177,7 @@
   <action name="action_info">
    <property name="icon">
     <iconset resource="recources.qrc">
-     <normaloff>:/recources/actions/actionInfo.png</normaloff>:/recources/actions/actionInfo.png</iconset>
+     <normaloff>:/recources/actions/File-WAV-icon.png</normaloff>:/recources/actions/File-WAV-icon.png</iconset>
    </property>
    <property name="text">
     <string>Заголовок WAV файла</string>
@@ -210,6 +211,15 @@
    </property>
    <property name="text">
     <string>Stop</string>
+   </property>
+  </action>
+  <action name="action_noiseinfo">
+   <property name="icon">
+    <iconset resource="recources.qrc">
+     <normaloff>:/recources/actions/actionInfo.png</normaloff>:/recources/actions/actionInfo.png</iconset>
+   </property>
+   <property name="text">
+    <string>Показатели искажения</string>
    </property>
   </action>
  </widget>

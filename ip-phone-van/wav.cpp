@@ -125,6 +125,13 @@ void WAV::open(std::string path)
         // Close file
         fclose(pFile);
         this->state = true;
+
+        // replace 0 => 2
+        for(int i=0;i<p_header->WAVE_D.subChunk2Size;i++)
+        {
+            this->data[i] = this->data[i]==0?2:this->data[i];
+        }
+
         // save original data
         this->original_data = new unsigned char [p_header->WAVE_D.subChunk2Size];
         memcpy(this->original_data, this->data, p_header->WAVE_D.subChunk2Size);

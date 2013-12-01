@@ -76,11 +76,7 @@ void MainWindow::plotReplot(std::vector <int> index_ignore)
     {
         x[i] = time*(double(i)/(size-1)); 
         y[i] = double(data[i]);
-        data[i] = data[i]==STOP_SYMBOL ?2:data[i];
     }
-
-    if(size>0)
-        data[size] = STOP_SYMBOL; // stop sybmol
 
     if(!index_ignore.empty())
     {
@@ -111,6 +107,7 @@ void MainWindow::actionsEnabled(bool state)
     ui->action_packetRecover->setDisabled(!state);
     ui->action_stop->setDisabled(!state);
     ui->action_playpause->setDisabled(!state);
+    ui->action_noiseinfo->setDisabled(!state);
 }
 
 
@@ -233,6 +230,9 @@ void MainWindow::on_action_packetDelete_triggered()
 
     }
     delete dpd;
+
+    // backup data with deleted packets
+    memcpy(algorithms->container->data_del,algorithms->container->data,sizeinbytes);
 }
 
 
@@ -328,15 +328,16 @@ void MainWindow::on_action_packetRecover_triggered()
         {
             case 0:
             {
-                for(int i=0; i<this->sizeinbytes; i++)
-                {
-                    file->wav_header->data[i] = file->wav_header->getOriginalData()[i];
-                }
+                memcpy(file->wav_header->data,file->wav_header->getOriginalData(),sizeinbytes);
             }break;
-            case 1: algorithms->splicing(); break;
-            case 2: algorithms->silenceSubstitution(); break;
-            case 3: algorithms->noiseSubstitution(); break;
-            case 4: algorithms->packetRepetition(); break;
+            case 1:
+            {
+                memcpy(algorithms->container->data,algorithms->container->data_del,sizeinbytes);
+            }break;
+            case 2: algorithms->splicing(); break;
+            case 3: algorithms->silenceSubstitution(); break;
+            case 4: algorithms->noiseSubstitution(); break;
+            case 5: algorithms->packetRepetition(); break;
         }
         this->plotReplot();
     }
@@ -361,4 +362,20 @@ void MainWindow::on_action_saveas_triggered()
         }
         setWindowTitle("Waver (" + path + ")");
     }
+}
+
+
+void MainWindow::on_action_noiseinfo_triggered()
+{
+    std::map<std::string,std::string> wav = file->wav_header->getHeader();
+
+    if(wav.empty())
+        return;
+
+    Dialog_NoiseInfo *dni = new Dialog_NoiseInfo(file->wav_header->data,
+                                                 file->wav_header->getOriginalData(),
+                                                 sizeinbytes,
+                                                 this);
+    dni->exec();
+    delete dni;
 }

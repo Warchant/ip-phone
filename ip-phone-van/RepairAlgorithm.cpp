@@ -43,6 +43,7 @@ void RepairAlgorithm::setPacketsAmount(int size)
     this->sizeinpackets = size;
 }
 
+
 // +
 void RepairAlgorithm::cleanBeforeFirst()
 {
@@ -76,6 +77,18 @@ void RepairAlgorithm::cleanBeforeFirst()
 // +
 void RepairAlgorithm::splicing()
 {
+    double mean = 0;
+    int amount  = 0;
+    for(int i=0;i<sizeinbytes;i++)
+    {
+        if(container->data[i] != PLACEHOLDER)
+        {
+            amount++;
+            mean+=double(container->data[i]);
+        }
+    }
+    mean/=amount;
+
     int offset = 0;
     for(int i=0; i<this->sizeinbytes; i++)
     {
@@ -89,10 +102,11 @@ void RepairAlgorithm::splicing()
         }
         else
         {
-            container->data[i] = 0;
+            container->data[i] = mean;
         }
     }
 }
+
 
 // +
 void RepairAlgorithm::silenceSubstitution()
@@ -116,6 +130,7 @@ void RepairAlgorithm::silenceSubstitution()
         }
     }
 }
+
 
 // +
 void RepairAlgorithm::noiseSubstitution()
@@ -166,6 +181,7 @@ void RepairAlgorithm::noiseSubstitution()
 }
 
 
+//+
 void RepairAlgorithm::packetRepetition()
 {
     this->cleanBeforeFirst();

@@ -10,6 +10,7 @@
 #include "packets.h"
 #include "RepairAlgorithm.h"
 #include "dialog_packetrecovery.h"
+#include "dialog_noiseinfo.h"
 #include <math.h>
 
 namespace Ui {
@@ -45,6 +46,8 @@ private slots:
     void on_action_packetRecover_triggered();
 
     void on_action_saveas_triggered();
+
+    void on_action_noiseinfo_triggered();
 
 private:
 

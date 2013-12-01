@@ -9,7 +9,9 @@ Packets::Packets()
 Packets::Packets(packet data, int size)
 {
     this->data = data;
-    this->size = size;
+    this->size = size; // size in bytes
+
+    this->data_del = new unsigned char [size];
 }
 
 

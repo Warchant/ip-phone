@@ -22,7 +22,8 @@ SOURCES += main.cpp\
         functions.cpp \
     dialog_packetdelete.cpp \
     packets.cpp \
-    dialog_packetrecovery.cpp
+    dialog_packetrecovery.cpp \
+    dialog_noiseinfo.cpp
 
 HEADERS  += mainwindow.h \
         wav.h \
@@ -33,12 +34,14 @@ HEADERS  += mainwindow.h \
         functions.h \
     dialog_packetdelete.h \
     packets.h \
-    dialog_packetrecovery.h
+    dialog_packetrecovery.h \
+    dialog_noiseinfo.h
 
 FORMS    += mainwindow.ui \
     dialog_info.ui \
     dialog_packetdelete.ui \
-    dialog_packetrecovery.ui
+    dialog_packetrecovery.ui \
+    dialog_noiseinfo.ui
 
 OTHER_FILES +=
 
