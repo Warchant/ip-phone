@@ -3,8 +3,13 @@
 
 Packets::Packets()
 { 
+    this->data_del = new unsigned char[1];
 }
 
+Packets::~Packets()
+{
+    delete [] data_del;
+}
 
 Packets::Packets(packet data, int size)
 {

@@ -17,6 +17,8 @@ public:
     Packets();
     Packets(packet data, int size);
 
+    ~Packets();
+
     void createPackets(int length);
     void deletePacket(int number);
     void replacePacket(int number, packet pk);
