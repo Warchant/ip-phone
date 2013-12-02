@@ -113,8 +113,9 @@ void WAV::open(std::string path)
         // FIXME: subChunkID size is 4 (0-3)
         p_header->WAVE_D.subChunkID[4] = '\0';
 
-        //Allocate memory for data
-        this->data = new unsigned char[p_header->WAVE_D.subChunk2Size];
+        // Allocate memory for data
+        this->data = new unsigned char[p_header->WAVE_D.subChunk2Size + 1];
+        this->data[p_header->WAVE_D.subChunk2Size] = 0;
 
         // Read in the sound data into the soundData variable
         if (!fread(data, p_header->WAVE_D.subChunk2Size, 1, pFile))
