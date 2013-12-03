@@ -8,8 +8,8 @@ Dialog_PacketRecovery::Dialog_PacketRecovery(QWidget *parent) :
     ui->setupUi(this);
 
     QStringList itemList;
-    itemList << "<Restore the original>"
-             << "<Restore the deletion>"
+    itemList << "<Restore the deletion>"
+             << "<Restore the original>"
              << "Splicing"
              << "Silence Substitution"
              << "Noise Substitution"

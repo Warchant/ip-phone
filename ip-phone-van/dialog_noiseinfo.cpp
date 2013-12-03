@@ -23,7 +23,7 @@ Dialog_NoiseInfo::Dialog_NoiseInfo(unsigned char *cData,
     this->ui->label_nc->setText( "NC  = " + QString::number(this->nc));
     this->ui->label_cq->setText( "CQ  = " + QString::number(this->cq));
     this->ui->label_mse->setText("MSE = " + QString::number(this->mse));
-    this->ui->label_snr->setText("SNR = " + QString::number(this->snr));
+    this->ui->label_snr->setText("SNR = " + QString::number(this->snr) + " dB");
 
 }
 
@@ -39,8 +39,13 @@ double Dialog_NoiseInfo::calcNc()
     double den = 0;
     for(int i=0; i<size; i++)
     {
-        num+= (currentData[i]==0?1:currentData[i]) * (originalData[i]==0?1:originalData[i]);
-        den+= (currentData[i]==0?1:currentData[i]) * (currentData[i]==0?1:currentData[i]);
+        // sum(C * S) / sum(C * C)
+        // C => originalData
+        // S => currentData
+        int C = (originalData[i]==0?1:originalData[i]);
+        int S = (currentData[i]==0?1:currentData[i]);
+        num+= C * S;
+        den+= C * C;
     }
     return num/den;
 }
@@ -52,8 +57,13 @@ double Dialog_NoiseInfo::calcCq()
     double den = 0;
     for(int i=0; i<size; i++)
     {
-        num+= (currentData[i]==0?1:currentData[i]) * (originalData[i]==0?1:originalData[i]);
-        den+= (currentData[i]==0?1:currentData[i]);
+        // sum(C * S) / sum(C)
+        // C => originalData
+        // S => currentData
+        int C = (originalData[i]==0?1:originalData[i]);
+        int S = (currentData[i]==0?1:currentData[i]);
+        num+= C * S;
+        den+= C;
     }
     return num/den;
 }
@@ -64,7 +74,11 @@ double Dialog_NoiseInfo::calcMse()
     double sum = 0;
     for(int i=0; i<size; i++)
     {
-        int el = (currentData[i]==0?1:currentData[i]) - (originalData[i]==0?1:originalData[i]);
+        // C => originalData
+        // S => currentData
+        int C = (originalData[i]==0?1:originalData[i]);
+        int S = (currentData[i]==0?1:currentData[i]);
+        int el =  C - S;
         sum+= el*el;
     }
     return sum/this->size;
@@ -73,5 +87,17 @@ double Dialog_NoiseInfo::calcMse()
 
 double Dialog_NoiseInfo::calcSnr()
 {
-    return 0;
+    double num = 0;
+    double den = 0;
+    for(int i=0; i<size; i++)
+    {
+        // sum(C * S) / sum(C)
+        // C => originalData
+        // S => currentData
+        int C = (originalData[i]==0?1:originalData[i]);
+        int S = (currentData[i]==0?1:currentData[i]);
+        num+= C * C;
+        den+= (C - S) * (C - S);
+    }
+    return 10*log10(num/den);
 }

@@ -20,19 +20,19 @@ AudioIO::~AudioIO(){
 }
 
 
-std::string AudioIO::getPath() const
+QString AudioIO::getPath() const
 {
     return path;
 }
 
 
-void AudioIO::setPath(const std::string &value)
+void AudioIO::setPath(const QString &value)
 {
     delete this->wav_header;
     path = value;
     this->wav_header = new WAV(this->path);
 
-    this->sourceFile.setFileName(this->path.c_str());
+    this->sourceFile.setFileName(this->path);
 
     std::map<std::string,std::string> wav = wav_header->getHeader();
 
@@ -88,8 +88,8 @@ bool AudioIO::isOpen()
 }
 
 
-bool AudioIO::copyFileTo(std::string newpath)
+bool AudioIO::copyFileTo(QString newpath)
 {
-    return sourceFile.copy(newpath.c_str());
+    return sourceFile.copy(newpath);
 }
 

@@ -7,7 +7,7 @@
 
 #include "WAV.h"
 
-WAV::WAV(std::string path) : header_size(sizeof(HEADER))
+WAV::WAV(QString path) : header_size(sizeof(HEADER))
 {
     this->state = false;
     p_header = new HEADER();
@@ -57,9 +57,9 @@ WAV::~WAV()
     delete p_header;
 }
 
-void WAV::open(std::string path)
+void WAV::open(QString path)
 {
-    FILE *pFile = fopen(path.c_str(),"rb");;
+    FILE *pFile = fopen(path.toLocal8Bit(),"rb");
 
     if(pFile!=NULL) // if file is exists
     {

@@ -14,7 +14,11 @@
 #include <algorithm>
 #include <map>
 #include <QVector>
+#include <QString>
+#include <QTextCodec>
 #include "functions.h"
+#include <QDebug>
+#include <QFile>
 
 
 class WAV
@@ -30,7 +34,7 @@ public:
     /*
      * @param path Input path to the wav file.
      */
-    WAV(std::string path);
+    WAV(QString path);
     WAV();
     ~WAV();
 
@@ -59,7 +63,7 @@ private:
     * @brief This function opens the WAVE file.
     * @param path Path to the WAVE file to open it.
     */
-    void open(std::string path);
+    void open(QString path);
     operator bool();
 
 

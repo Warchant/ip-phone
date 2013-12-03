@@ -78,7 +78,7 @@ private:
      * @param path
      * @return Saving state.
      */
-    bool saveFile(std::string path);
+    bool saveFile(QString path);
 };
 
 

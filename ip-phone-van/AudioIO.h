@@ -40,12 +40,12 @@ public:
      * @brief Getter for path;
      * @return this->path
      */
-    std::string getPath() const;
+    QString getPath() const;
     /**
      * @brief Setter for path;
-     * @param std::string path
+     * @param path
      */
-    void setPath(const std::string &value);
+    void setPath(const QString &value);
 
     void startPlayback();
     void pausePlayback();
@@ -53,7 +53,7 @@ public:
 
     bool isOpen();
 
-    bool copyFileTo(std::string newpath);
+    bool copyFileTo(QString newpath);
 
 private:
 
@@ -61,7 +61,7 @@ private:
 
     QAudioOutput* out;
 
-    std::string path;
+    QString path;
 
     QAudioFormat format;
     /**

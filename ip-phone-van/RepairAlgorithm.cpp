@@ -138,8 +138,8 @@ void RepairAlgorithm::noiseSubstitution()
     this->cleanBeforeFirst();
     int packet_length = container->getPacketLength();
     int last_correct;
-    int mean     = 0;
-    int variance = 0;
+    int mean        = 0;
+    double variance = 0;
     for(int i=0; i<sizeinpackets && container->data[i*packet_length]!=0; i++)
     {
         if(!container->isDeleted(i))
@@ -169,7 +169,7 @@ void RepairAlgorithm::noiseSubstitution()
         {
             // generate randn noise
             std::default_random_engine generator;
-            std::normal_distribution<double> randn(mean, variance);
+            std::normal_distribution<double> randn(mean, variance/2);
             for(int j=0; j<packet_length; j++)
             {
                 int randn_number = randn(generator);

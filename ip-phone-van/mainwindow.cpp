@@ -43,13 +43,13 @@ void MainWindow::plotSetup()
     }
 
     // Set ranges to top and bottom axis
-    ui->customPlot->yAxis->setRange(min-2 <= 0?min:min-2,max+5);
+    ui->customPlot->yAxis->setRange(min <= 2?2:min, max+5>=255?255:max+5);
     ui->customPlot->xAxis->setRange(0, time);
     ui->customPlot->setInteractions( QCP::iRangeDrag | QCP::iRangeZoom );
     ui->customPlot->axisRect(0)->setRangeDrag(Qt::Horizontal);
     ui->customPlot->axisRect(0)->setRangeZoom(Qt::Horizontal);
     ui->customPlot->xAxis->setLabel("Time, ms");
-    ui->customPlot->yAxis->setLabel("Amplitude");
+    ui->customPlot->yAxis->setLabel("Quantization Level");
     ui->customPlot->setNoAntialiasingOnDrag(true);
     ui->customPlot->xAxis->setVisible(true);
     ui->customPlot->yAxis->setVisible(true);
@@ -125,9 +125,9 @@ std::vector <int> MainWindow::randVector(int begin, int end, int amount)
 }
 
 
-bool MainWindow::saveFile(std::string path)
+bool MainWindow::saveFile(QString path)
 {
-    QFile f(path.c_str());
+    QFile f(path);
 
     if (!f.open(QIODevice::ReadWrite))
         return false;
@@ -147,25 +147,56 @@ bool MainWindow::saveFile(std::string path)
 
 void MainWindow::on_action_open_triggered()
 {
-    QFileDialog dialog(this);
-    // only existing file can be selected
-    dialog.setFileMode(QFileDialog::ExistingFile);
-    // wav files only
-    dialog.setNameFilter(tr("WAV files (*.wav)"));
-    // exec dialog
-    if(dialog.exec())
+    try
     {
-        QString path = dialog.selectedFiles().at(0);
-        file->setPath( path.toStdString() );
-        this->plotReplot();
-        setWindowTitle("Waver (" + path + ")");
-        this->actionsEnabled(true);
+        QFileDialog dialog(this);
+        // only existing file can be selected
+        dialog.setFileMode(QFileDialog::ExistingFile);
+        // wav files only
+        dialog.setNameFilter(tr("WAV files (*.wav)"));
+        // exec dialog
+        if(dialog.exec())
+        {
+            QString path = dialog.selectedFiles().at(0);
+            file->setPath( path );
+            this->plotReplot();
+            setWindowTitle("Waver (" + path + ")");
+            this->actionsEnabled(true);
 
-        delete this->algorithms;
-        std::map<std::string,std::string> wav = file->wav_header->getHeader();
-        int size = str2int(wav["subChunk2Size"]);
-        this->algorithms = new RepairAlgorithm(size);
-        this->algorithms->setData(file->wav_header->data);
+            delete this->algorithms;
+            std::map<std::string,std::string> wav = file->wav_header->getHeader();
+            this->sizeinbytes = str2int(wav["subChunk2Size"]);
+            int size = str2int(wav["subChunk2Size"]);
+            this->algorithms = new RepairAlgorithm(size);
+            this->algorithms->setData(file->wav_header->data);
+        }
+    }
+    catch (WAV::EXCEPTION e)
+    {
+        switch(e)
+        {
+        case WAV::FILE_BAD_HEADER:
+        {
+            // bad header
+            QMessageBox warning;
+            warning.setText(tr("Не удалось распознать формат файла."));
+            warning.exec();
+        }break;
+        case WAV::FILE_DATA_LOAD_FAIL:
+        {
+            // data load fail
+            QMessageBox warning;
+            warning.setText(tr("Не удалось прочесть данные файла. Возможно, файл имеет неправильный формат."));
+            warning.exec();
+        }break;
+        case WAV::FILE_MISSING:
+        {
+            // file is missing
+            QMessageBox warning;
+            warning.setText(tr("Не удалось открыть файл. Файл отсутствует."));
+            warning.exec();
+        }break;
+        }
     }
 }
 
@@ -190,13 +221,6 @@ void MainWindow::on_action_info_triggered()
 
 void MainWindow::on_action_packetDelete_triggered()
 {
-    std::map<std::string,std::string> wav = file->wav_header->getHeader();
-
-    if(wav.empty())
-        return;
-
-    this->sizeinbytes = str2int(wav["subChunk2Size"]);;
-
     Dialog_PacketDelete *dpd = new Dialog_PacketDelete(sizeinbytes,this);
 
     if(dpd->exec()) //show dialog
@@ -207,10 +231,10 @@ void MainWindow::on_action_packetDelete_triggered()
         algorithms->setPacketsAmount(size);
         algorithms->container->createPackets(this->packetLength); // create packets from bytes
 
-        del_index = randVector(0,size,dpd->to_delete);
-
-        if(!del_index.empty())
+        printf("size: %i\n",size);
+        if(dpd->to_delete > 0)
         {
+            del_index = randVector(0,size,dpd->to_delete);
             this->plotReplot(del_index);
             const QCPDataMap *dataMap = ui->customPlot->graph(0)->data();
             QVector <double> y;
@@ -224,10 +248,9 @@ void MainWindow::on_action_packetDelete_triggered()
 
         if(dpd->to_delete > 0)
         {
+            setWindowTitle(windowTitle().remove("*"));
             setWindowTitle(windowTitle() + "*");
         }
-
-
     }
     delete dpd;
 
@@ -326,18 +349,18 @@ void MainWindow::on_action_packetRecover_triggered()
     {
         switch(dpr->getAlgorithm())
         {
-            case 0:
-            {
-                memcpy(file->wav_header->data,file->wav_header->getOriginalData(),sizeinbytes);
-            }break;
             case 1:
-            {
-                memcpy(algorithms->container->data,algorithms->container->data_del,sizeinbytes);
-            }break;
-            case 2: algorithms->splicing(); break;
-            case 3: algorithms->silenceSubstitution(); break;
-            case 4: algorithms->noiseSubstitution(); break;
-            case 5: algorithms->packetRepetition(); break;
+                memcpy(file->wav_header->data,file->wav_header->getOriginalData(),sizeinbytes); break;
+            case 0:
+                memcpy(algorithms->container->data,algorithms->container->data_del,sizeinbytes); break;
+            case 2:
+                algorithms->splicing(); break;
+            case 3:
+                algorithms->silenceSubstitution(); break;
+            case 4:
+                algorithms->noiseSubstitution(); break;
+            case 5:
+                algorithms->packetRepetition(); break;
         }
         this->plotReplot();
     }
@@ -353,8 +376,8 @@ void MainWindow::on_action_saveas_triggered()
     if(fdi->exec())
     {
         QString path = fdi->selectedFiles().at(0);
-        file->copyFileTo(path.toStdString());
-        if(!this->saveFile(path.toStdString()))
+        file->copyFileTo(path);
+        if(!this->saveFile(path))
         {
             QMessageBox warning;
             warning.setText(tr("Не удалось сохранить файл. Возможно, нет доступа к папке."));
