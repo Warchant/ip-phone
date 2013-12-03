@@ -163,7 +163,7 @@ void RepairAlgorithm::noiseSubstitution()
                 variance+=(el-mean)*(el-mean);
             }
             variance /= (packet_length - 1);
-            variance = pow(variance, 0.5);
+            variance  = pow(variance, 0.5);
         }
         else
         {
@@ -200,14 +200,75 @@ void RepairAlgorithm::packetRepetition()
     }
 }
 
-
+/* TODO
 //?
 void RepairAlgorithm::timeScaleModification()
 {
     this->cleanBeforeFirst();
-    int packet_length = container->getPacketLength();
-    int last_correct = 0;
+    int   packet_length = container->getPacketLength();
+    int   left          = 0; // index of left correct packet
+    int   right         = 1; // i+right => correct packet
+    for(int i=0; i<sizeinpackets; i++)
+    {
+        if(!container->isDeleted(i))
+        {
+            // find left-sided packet
+            left = i;
+        }
+        else
+        {
+            // if deleted
+            // find right-sided packet
+            right = 1;
+            while(container->isDeleted(i+right) && i+right < sizeinpackets)
+            {
+                right++;
+            }
 
+            if(container->isDeleted(i+right))
+            {
+                // i to last packet are deleted
+
+            }
+            else
+            {
+                // split into 2 parts left and right packets, then concatenate them
+                packet conc         = new unsigned char [packet_length];
+                const packet pleft  = container->getPacket(left);
+                const packet pright = container->getPacket(i+right);
+                for(int j=0; j<packet_length; j++)
+                {
+                    // fill conc packet
+                    conc[j] = (j<packet_length/2) ?
+                                pleft [j + packet_length/2 + packet_length%2]:
+                                pright[j - packet_length/2];
+                }
+                delete [] pleft;
+                delete [] pright;
+                // we need to scale conc packet to size = packet_length*right
+                packet ins = new unsigned char [packet_length * right];
+                if(right == 1)
+                {
+                    // one deleted packet in a row
+                    memcpy(ins, conc, packet_length);
+                }
+                else
+                {
+                    // more than one deleted packet in a row
+                    for(int j=0; j<packet_length; j++)
+                    {
+                        for(int k=0; k<right; k++)
+                        {
+
+                        }
+                    }
+                }
+                delete [] conc;
+
+            }
+        }
+    }
 
 }
 
+*/
