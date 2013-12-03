@@ -45,7 +45,10 @@ public:
      * @brief packetRepetition: 111___333 => 111111333
      */
     void packetRepetition();
-
+    /**
+     * @brief timeScaleModification
+     */
+    void timeScaleModification();
 
     Packets* container;
 

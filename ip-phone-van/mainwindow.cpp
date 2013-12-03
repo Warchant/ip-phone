@@ -120,7 +120,7 @@ std::vector <int> MainWindow::randVector(int begin, int end, int amount)
         rnd[i] = (i+begin);
     }
     std::random_shuffle(rnd.begin(), rnd.end());
-    rnd.resize(amount);
+    rnd.resize(amount>length?length:amount);
     return rnd;
 }
 
@@ -234,7 +234,7 @@ void MainWindow::on_action_packetDelete_triggered()
         printf("size: %i\n",size);
         if(dpd->to_delete > 0)
         {
-            del_index = randVector(0,size,dpd->to_delete);
+            del_index = randVector(1,size,dpd->to_delete);
             this->plotReplot(del_index);
             const QCPDataMap *dataMap = ui->customPlot->graph(0)->data();
             QVector <double> y;

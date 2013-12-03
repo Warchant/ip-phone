@@ -200,3 +200,14 @@ void RepairAlgorithm::packetRepetition()
     }
 }
 
+
+//?
+void RepairAlgorithm::timeScaleModification()
+{
+    this->cleanBeforeFirst();
+    int packet_length = container->getPacketLength();
+    int last_correct = 0;
+
+
+}
+
