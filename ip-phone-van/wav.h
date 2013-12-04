@@ -52,6 +52,8 @@ public:
 
 private:
 
+    std::string clearName(const char *a, int size);
+
     const int header_size;
     unsigned char *original_data;
     void fillHeaderData();

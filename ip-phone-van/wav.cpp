@@ -35,9 +35,9 @@ const unsigned char *WAV::getOriginalData() const
 void WAV::fillHeaderData()
 {
     // RIFF chunk
-    this->header_data["chunkID"]       =         p_header->RIFF.chunkID;
-    this->header_data["chunkSize"]     = int2str(p_header->RIFF.chunkSize);
-    this->header_data["format"]        =         p_header->RIFF.format;
+    this->header_data["chunkID"]       = clearName(p_header->RIFF.chunkID,4);
+    this->header_data["chunkSize"]     = int2str  (p_header->RIFF.chunkSize);
+    this->header_data["format"]        = clearName(p_header->RIFF.format,4);
     // WAVE_FORMAT chunk
     this->header_data["audioFormat"]   = int2str(p_header->WAVE_F.audioFormat);
     this->header_data["bitsPerSample"] = int2str(p_header->WAVE_F.bitsPerSample);
@@ -45,11 +45,11 @@ void WAV::fillHeaderData()
     this->header_data["byteRate"]      = int2str(p_header->WAVE_F.byteRate);
     this->header_data["numChannels"]   = int2str(p_header->WAVE_F.numChannels);
     this->header_data["sampleRate"]    = int2str(p_header->WAVE_F.sampleRate);
-    this->header_data["f_subChunkID"]    =         p_header->WAVE_F.subChunkID;
-    this->header_data["subChunkSize"]  = int2str(p_header->WAVE_F.subChunkSize);
+    this->header_data["f_subChunkID"]  = clearName(p_header->WAVE_F.subChunkID,4);
+    this->header_data["subChunkSize"]  = int2str  (p_header->WAVE_F.subChunkSize);
     // WAVE_DATA chunk
-    this->header_data["subChunk2Size"] = int2str(p_header->WAVE_D.subChunk2Size);
-    this->header_data["d_subChunkID"]    =         p_header->WAVE_D.subChunkID;
+    this->header_data["subChunk2Size"] = int2str  (p_header->WAVE_D.subChunk2Size);
+    this->header_data["d_subChunkID"]  = clearName(p_header->WAVE_D.subChunkID,4);
 }
 
 WAV::~WAV()
@@ -76,10 +76,6 @@ void WAV::open(QString path)
         {
              throw FILE_BAD_HEADER;
         }
-        // FIXME: size is 4 (0-3)
-        p_header->RIFF.chunkID[4] = '\0';
-        p_header->RIFF.format[4] = '\0';
-
 
         //Read in the 2nd chunk for the wave info
         fread(&p_header->WAVE_F, sizeof(p_header->WAVE_F), 1, pFile);
@@ -91,8 +87,6 @@ void WAV::open(QString path)
         {
             throw FILE_BAD_HEADER;
         }
-        // FIXME: subChunkID size is 4 (0-3)
-        p_header->WAVE_F.subChunkID[4] = '\0';
 
         //check for extra parameters;
         if (p_header->WAVE_F.subChunkSize > 16)
@@ -110,8 +104,6 @@ void WAV::open(QString path)
         {
             throw FILE_BAD_HEADER;
         }
-        // FIXME: subChunkID size is 4 (0-3)
-        p_header->WAVE_D.subChunkID[4] = '\0';
 
         // Allocate memory for data
         this->data = new unsigned char[p_header->WAVE_D.subChunk2Size + 1];
@@ -161,4 +153,13 @@ void WAV::convert2data(QVector<double> y)
 int WAV::getHeaderSize()
 {
     return this->header_size;
+}
+
+
+std::string WAV::clearName(const char *a, int size)
+{
+    std::string cor = a;
+    cor.resize(size);
+    cor+='\0';
+    return cor;
 }
