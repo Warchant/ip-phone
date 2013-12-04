@@ -74,7 +74,7 @@ private:
     */
     struct RIFF_Header {
     char chunkID[4];
-    long chunkSize;//size not including chunkSize or chunkID
+    int chunkSize;//size not including chunkSize or chunkID
     char format[4];
     };
 
@@ -83,11 +83,11 @@ private:
     */
     struct WAVE_Format {
     char  subChunkID[4];
-    long  subChunkSize;
+    int  subChunkSize;
     short audioFormat;
     short numChannels;
-    long  sampleRate;
-    long  byteRate;
+    int  sampleRate;
+    int  byteRate;
     short blockAlign;
     short bitsPerSample;
     };
@@ -97,7 +97,7 @@ private:
     */
     struct WAVE_Data {
     char subChunkID[4]; //should contain the word data
-    long subChunk2Size; //Stores the size of the data block
+    int subChunk2Size; //Stores the size of the data block
     };
 
     /*

@@ -5,7 +5,7 @@
 //  Original author: Bogdan Vaneev warchantua@gmail.com
 ///////////////////////////////////////////////////////////
 
-#include "WAV.h"
+#include "wav.h"
 
 WAV::WAV(QString path) : header_size(sizeof(HEADER))
 {
