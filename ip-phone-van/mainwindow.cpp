@@ -231,7 +231,6 @@ void MainWindow::on_action_packetDelete_triggered()
         algorithms->setPacketsAmount(size);
         algorithms->container->createPackets(this->packetLength); // create packets from bytes
 
-        printf("size: %i\n",size);
         if(dpd->to_delete > 0)
         {
             del_index = randVector(1,size,dpd->to_delete);
@@ -361,6 +360,8 @@ void MainWindow::on_action_packetRecover_triggered()
                 algorithms->noiseSubstitution(); break;
             case 5:
                 algorithms->packetRepetition(); break;
+            case 6:
+                algorithms->timeScaleModification(); break;
         }
         this->plotReplot();
     }

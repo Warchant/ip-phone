@@ -13,7 +13,8 @@ Dialog_PacketRecovery::Dialog_PacketRecovery(QWidget *parent) :
              << "Splicing"
              << "Silence Substitution"
              << "Noise Substitution"
-             << "Packet Repetition";
+             << "Packet Repetition"
+             << "Time Scale Modification"   ;
     ui->comboBox_algo->addItems(itemList);
     number = 0;
 }

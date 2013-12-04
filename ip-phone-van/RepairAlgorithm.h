@@ -12,6 +12,7 @@
 #include <vector>
 #include <algorithm>
 #include <random>
+#include <QDebug>
 
 /**
  * @brief The RepairAlgorithm class

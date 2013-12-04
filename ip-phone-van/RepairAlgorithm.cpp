@@ -200,14 +200,14 @@ void RepairAlgorithm::packetRepetition()
     }
 }
 
-/* TODO
-//?
+
+//+
 void RepairAlgorithm::timeScaleModification()
 {
     this->cleanBeforeFirst();
     int   packet_length = container->getPacketLength();
     int   left          = 0; // index of left correct packet
-    int   right         = 1; // i+right => correct packet
+    int   offset        = 1; // i+offset => right correct packet
     for(int i=0; i<sizeinpackets; i++)
     {
         if(!container->isDeleted(i))
@@ -219,24 +219,28 @@ void RepairAlgorithm::timeScaleModification()
         {
             // if deleted
             // find right-sided packet
-            right = 1;
-            while(container->isDeleted(i+right) && i+right < sizeinpackets)
+            offset = 1;
+            while(container->isDeleted(i+offset) && i+offset < sizeinpackets)
             {
-                right++;
+                offset++;
             }
 
-            if(container->isDeleted(i+right))
+            if(container->isDeleted(sizeinpackets-1) && i+offset == sizeinpackets)
             {
-                // i to last packet are deleted
-
+                // [i..last] packets are deleted
+                // replace them by last correct packet
+                for(int j=i; j<sizeinpackets; j++)
+                {
+                    container->replacePacket(j,container->getPacket(left));
+                }
             }
             else
             {
                 // split into 2 parts left and right packets, then concatenate them
-                packet conc         = new unsigned char [packet_length];
+                packet conc         = new unsigned char [packet_length + 1];
                 const packet pleft  = container->getPacket(left);
-                const packet pright = container->getPacket(i+right);
-                for(int j=0; j<packet_length; j++)
+                const packet pright = container->getPacket(i+offset);
+                for(int j=0; j<packet_length + 1; j++)
                 {
                     // fill conc packet
                     conc[j] = (j<packet_length/2) ?
@@ -245,9 +249,10 @@ void RepairAlgorithm::timeScaleModification()
                 }
                 delete [] pleft;
                 delete [] pright;
+
                 // we need to scale conc packet to size = packet_length*right
-                packet ins = new unsigned char [packet_length * right];
-                if(right == 1)
+                packet ins = new unsigned char [packet_length * offset];
+                if(offset == 1)
                 {
                     // one deleted packet in a row
                     memcpy(ins, conc, packet_length);
@@ -257,18 +262,22 @@ void RepairAlgorithm::timeScaleModification()
                     // more than one deleted packet in a row
                     for(int j=0; j<packet_length; j++)
                     {
-                        for(int k=0; k<right; k++)
+                        double step = double(conc[j+1] - conc[j]) / offset;
+                        for(int k=0; k<offset; k++)
                         {
-
+                            int index  = offset*j + k;
+                            ins[index] = conc[j]  + k*step;
+                            ins[index] = ins[index] < 2 ? 2 : ins[index];
                         }
                     }
                 }
-                delete [] conc;
 
+                // replace deletion by ins
+                memcpy(container->data + i*packet_length, ins, sizeof(unsigned char)*offset*packet_length);
+                delete [] conc;
+                delete [] ins;
             }
         }
     }
 
 }
-
-*/
