@@ -50,6 +50,10 @@ public:
      * @brief timeScaleModification
      */
     void timeScaleModification();
+    /**
+     * @brief autoregressiveModel
+     */
+    void autoregressiveModel();
 
     Packets* container;
 

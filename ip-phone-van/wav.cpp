@@ -54,12 +54,13 @@ void WAV::fillHeaderData()
 
 WAV::~WAV()
 {
-    delete p_header;
+    //delete p_header;
 }
+
 
 void WAV::open(QString path)
 {
-    FILE *pFile = fopen(path.toLocal8Bit(),"rb");
+    pFile = fopen(path.toLocal8Bit(),"rb");
 
     if(pFile!=NULL) // if file is exists
     {
@@ -91,7 +92,16 @@ void WAV::open(QString path)
         //check for extra parameters;
         if (p_header->WAVE_F.subChunkSize > 16)
         {
-            fseek(pFile, sizeof(short), SEEK_CUR);
+            char d[4];
+            bool read;
+            do
+            {
+                read = fread(&d,sizeof(char)*4,1,pFile);
+            }while(read && (d[0]!='d' ||
+                            d[1]!='a' ||
+                            d[2]!='t' ||
+                            d[3]!='a' ));
+            fseek(pFile,-4,SEEK_CUR);
         }
 
         //Read in the the last byte of data before the sound file
@@ -128,14 +138,21 @@ void WAV::open(QString path)
         // save original data
         this->original_data = new unsigned char [p_header->WAVE_D.subChunk2Size];
         memcpy(this->original_data, this->data, p_header->WAVE_D.subChunk2Size);
+
         // fill std::map
         this->fillHeaderData();
+
+        if(p_header->WAVE_F.bitsPerSample != 8)
+        {
+            throw FILE_HEADER_NOT8BPS;
+        }
     }
     else
     {
         throw FILE_MISSING;
     }
 }
+
 
 WAV::operator bool(){
 	return this->state;

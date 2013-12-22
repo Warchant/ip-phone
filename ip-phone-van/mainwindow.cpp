@@ -36,14 +36,22 @@ void MainWindow::plotSetup()
     int     min = 255;
     int     max = 0;
 
+    const QCPDataMap *dataMap = ui->customPlot->graph(0)->data();
+    QVector <double> y;
+    for(QMap<double, QCPData>::const_iterator it = dataMap->constBegin();
+        it!=dataMap->constEnd(); ++it)
+    {
+        y.push_back(it.value().value);
+    }
+
     for(int i=0; i<size; i++)
     {
-        min = min > file->wav_header->data[i] ? file->wav_header->data[i] : min;
-        max = max < file->wav_header->data[i] ? file->wav_header->data[i] : max;
+        min = min > y.at(i) ? y.at(i) : min;
+        max = max < y.at(i) ? y.at(i) : max;
     }
 
     // Set ranges to top and bottom axis
-    ui->customPlot->yAxis->setRange(min <= 2?2:min, max+5>=255?255:max+5);
+    ui->customPlot->yAxis->setRange(min <= 2?2:min, max);
     ui->customPlot->xAxis->setRange(0, time);
     ui->customPlot->setInteractions( QCP::iRangeDrag | QCP::iRangeZoom );
     ui->customPlot->axisRect(0)->setRangeDrag(Qt::Horizontal);
@@ -74,7 +82,7 @@ void MainWindow::plotReplot(std::vector <int> index_ignore)
     QVector<double> x(size), y(size);
     for (int i=0; i<size; i++)
     {
-        x[i] = time*(double(i)/(size-1)); 
+        x[i] = time*(double(i)/(size-1));
         y[i] = double(data[i]);
     }
 
@@ -90,9 +98,9 @@ void MainWindow::plotReplot(std::vector <int> index_ignore)
         }
     }
 
-    this->plotSetup();
     ui->customPlot->addGraph();
     ui->customPlot->graph(0)->setData(x,y);
+    this->plotSetup();
     ui->customPlot->replot();
 }
 
@@ -179,8 +187,9 @@ void MainWindow::on_action_open_triggered()
         {
             // bad header
             QMessageBox warning;
-            warning.setText(tr("Не удалось распознать формат файла."));
+            warning.setText(tr("Не удалось распознать формат файла. Неправильный заголовок."));
             warning.exec();
+            exit(1);
         }break;
         case WAV::FILE_DATA_LOAD_FAIL:
         {
@@ -188,6 +197,7 @@ void MainWindow::on_action_open_triggered()
             QMessageBox warning;
             warning.setText(tr("Не удалось прочесть данные файла. Возможно, файл имеет неправильный формат."));
             warning.exec();
+            exit(2);
         }break;
         case WAV::FILE_MISSING:
         {
@@ -195,6 +205,15 @@ void MainWindow::on_action_open_triggered()
             QMessageBox warning;
             warning.setText(tr("Не удалось открыть файл. Файл отсутствует."));
             warning.exec();
+            exit(3);
+        }break;
+        case WAV::FILE_HEADER_NOT8BPS:
+        {
+            // file is missing
+            QMessageBox warning;
+            warning.setText(tr("Не удалось открыть файл. Поддерживаются только 8-битные WAV файлы."));
+            warning.exec();
+            exit(4);
         }break;
         }
     }
@@ -264,10 +283,10 @@ void MainWindow::on_action_new_triggered()
     file->wav_header = new WAV();
     setWindowTitle("Waver");
     this->actionsEnabled(false);
-    this->plotReplot();
     ui->customPlot->xAxis->setVisible(false);
     ui->customPlot->yAxis->setVisible(false);
     ui->customPlot->removePlottable(0);
+    ui->customPlot->replot();
 }
 
 

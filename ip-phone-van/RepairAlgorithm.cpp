@@ -281,3 +281,9 @@ void RepairAlgorithm::timeScaleModification()
     }
 
 }
+
+
+//?
+void RepairAlgorithm::autoregressiveModel()
+{
+}

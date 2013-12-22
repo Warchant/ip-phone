@@ -15,8 +15,8 @@
 #include <map>
 #include <QVector>
 #include <QString>
-#include <QTextCodec>
 #include "functions.h"
+#include <QDataStream>
 #include <QDebug>
 #include <QFile>
 
@@ -28,7 +28,8 @@ public:
     enum EXCEPTION{
          FILE_MISSING,
          FILE_BAD_HEADER,
-         FILE_DATA_LOAD_FAIL
+         FILE_DATA_LOAD_FAIL,
+         FILE_HEADER_NOT8BPS
     };
 
     /*
@@ -117,6 +118,8 @@ private:
     */
     HEADER *p_header;
     bool state;
+
+    FILE * pFile;
 };
 
 #endif // !defined(EA_9D02C5A1_1D02_4287_8FFE_606E2687AEFF__INCLUDED_)

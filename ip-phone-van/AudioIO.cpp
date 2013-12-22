@@ -43,8 +43,9 @@ void AudioIO::setPath(const QString &value)
     format.setSampleSize  ( bps );
     format.setCodec       ( "audio/pcm" );
     format.setByteOrder   ( QAudioFormat::LittleEndian );
-    format.setSampleType  ( bps == 8 ? QAudioFormat::UnSignedInt : QAudioFormat::SignedInt );
+    //format.setSampleType  ( bps == 8 ? QAudioFormat::UnSignedInt : QAudioFormat::SignedInt );
 
+    /*
     QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
     if (!info.isFormatSupported(format)) {
       QMessageBox warning;
@@ -56,6 +57,7 @@ void AudioIO::setPath(const QString &value)
 
       return;
     }
+*/
 }
 
 
