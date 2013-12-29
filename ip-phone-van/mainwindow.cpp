@@ -30,11 +30,14 @@ MainWindow::~MainWindow()
 void MainWindow::plotSetup()
 {
     std::map <std::string, std::string> wav = file->wav_header->getHeader();
-    int     bps = wav.empty()?0:str2int(wav["bitsPerSample"]);
+    int     bps = wav.empty()?0: str2int(wav["bitsPerSample"]);
+            bps = bps !=8 && bps !=16 ? 8 : bps;
     int    size = str2int(wav["subChunk2Size"]);
     double time = 1.* size / bps;
     int     min = 255;
     int     max = 0;
+
+    bps = bps !=8 && bps !=16 ? 8 : bps;
 
     const QCPDataMap *dataMap = ui->customPlot->graph(0)->data();
     QVector <double> y;
@@ -43,8 +46,6 @@ void MainWindow::plotSetup()
     {
         y.push_back(it.value().value);
     }
-
-
 
     for(int i=0; i<y.size(); i++)
     {
@@ -76,6 +77,7 @@ void MainWindow::plotReplot(std::vector <int> index_ignore)
 {
     std::map <std::string, std::string> wav = file->wav_header->getHeader();
     int     bps = wav.empty()?0: str2int(wav["bitsPerSample"]);
+            bps = bps !=8 && bps !=16 ? 8 : bps;
     int    size = wav.empty()?0: str2int(wav["subChunk2Size"]);
     double time = double(size) / bps;
 
