@@ -44,14 +44,16 @@ void MainWindow::plotSetup()
         y.push_back(it.value().value);
     }
 
-    for(int i=0; i<size; i++)
+
+
+    for(int i=0; i<y.size(); i++)
     {
         min = min > y.at(i) ? y.at(i) : min;
         max = max < y.at(i) ? y.at(i) : max;
     }
 
     // Set ranges to top and bottom axis
-    ui->customPlot->yAxis->setRange(min <= 2?2:min, max);
+    ui->customPlot->yAxis->setRange(min, max);
     ui->customPlot->xAxis->setRange(0, time);
     ui->customPlot->setInteractions( QCP::iRangeDrag | QCP::iRangeZoom );
     ui->customPlot->axisRect(0)->setRangeDrag(Qt::Horizontal);
@@ -79,16 +81,25 @@ void MainWindow::plotReplot(std::vector <int> index_ignore)
 
     unsigned char * data = file->wav_header->data;
 
+    size = bps == 16 ? size/2 : size;
+
     QVector<double> x(size), y(size);
     for (int i=0; i<size; i++)
     {
         x[i] = time*(double(i)/(size-1));
-        y[i] = double(data[i]);
+        if(bps==16)
+        {
+            y[i] = double(twoCharToInt(data[2*i+1],data[2*i]));
+        }
+        else
+        {
+            y[i] = double(data[i]);
+        }
     }
 
     if(!index_ignore.empty())
     {
-        for (unsigned int i=0; i<index_ignore.size();i++ )
+        for (unsigned int i=0; i<index_ignore.size()/2;i++ )
         {
             for(int j=0; j<this->packetLength; j++)
             {
@@ -150,6 +161,15 @@ bool MainWindow::saveFile(QString path)
     }
     f.close();
     return true;
+}
+
+
+int MainWindow::twoCharToInt(char a, char b)
+{
+    int i = *(signed char *)(&a);
+    i *= 1 << CHAR_BIT;
+    i |= b;
+    return i;
 }
 
 

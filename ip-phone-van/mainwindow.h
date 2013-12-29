@@ -79,6 +79,8 @@ private:
      * @return Saving state.
      */
     bool saveFile(QString path);
+
+    int twoCharToInt(char a, char b);
 };
 
 

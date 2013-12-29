@@ -141,11 +141,12 @@ void WAV::open(QString path)
 
         // fill std::map
         this->fillHeaderData();
-
+        /*
         if(p_header->WAVE_F.bitsPerSample != 8)
         {
             throw FILE_HEADER_NOT8BPS;
         }
+        */
     }
     else
     {

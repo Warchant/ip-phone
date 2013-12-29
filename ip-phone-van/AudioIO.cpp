@@ -43,21 +43,21 @@ void AudioIO::setPath(const QString &value)
     format.setSampleSize  ( bps );
     format.setCodec       ( "audio/pcm" );
     format.setByteOrder   ( QAudioFormat::LittleEndian );
-    //format.setSampleType  ( bps == 8 ? QAudioFormat::UnSignedInt : QAudioFormat::SignedInt );
+    format.setSampleType  ( bps == 8 ? QAudioFormat::UnSignedInt : QAudioFormat::SignedInt );
 
-    /*
     QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
     if (!info.isFormatSupported(format)) {
       QMessageBox warning;
       warning.setText(tr("WAV audio format not supported by backend, cannot play audio."));
       warning.exec();
 
+      /*
       delete this->wav_header;
       this->wav_header = new WAV();
-
+      */
       return;
     }
-*/
+
 }
 
 
