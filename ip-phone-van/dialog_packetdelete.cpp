@@ -38,7 +38,10 @@ void Dialog_PacketDelete::on_sb_length_editingFinished()
     int val = ui->sb_length->value();
     // if number of bytes is bigger than 30 000
     val     = val > 30000 ? 5000 : val;
-
+    if(m_length % 2 != 0)
+    {
+        m_length--;
+    }
     if(m_length % val != 0)
     {
         ui->sb_length->setValue(val < m_length/2 + 1 ? val - 1 : val + 1);

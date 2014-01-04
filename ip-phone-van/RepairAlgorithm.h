@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <random>
 #include <QDebug>
+#include "functions.h"
 
 /**
  * @brief The RepairAlgorithm class
@@ -25,7 +26,7 @@ public:
 	virtual ~RepairAlgorithm();
 
     void setSizeInBytes(int sib);
-    void setData(unsigned char * d);
+    void setData(packet * d);
     void setPacketLength(int length);
     void setPacketsAmount(int size);
 

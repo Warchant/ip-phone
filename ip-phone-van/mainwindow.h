@@ -17,6 +17,8 @@ namespace Ui {
 class MainWindow;
 }
 
+
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -59,7 +61,6 @@ private:
 
     AudioIO *file;
 
-
     void plotReplot();
     void plotReplot(std::vector<int> index_ignore);
 
@@ -80,7 +81,6 @@ private:
      */
     bool saveFile(QString path);
 
-    int twoCharToInt(char a, char b);
 };
 
 

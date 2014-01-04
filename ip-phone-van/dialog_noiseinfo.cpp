@@ -1,8 +1,8 @@
 #include "dialog_noiseinfo.h"
 #include "ui_dialog_noiseinfo.h"
 
-Dialog_NoiseInfo::Dialog_NoiseInfo(unsigned char *cData,
-                                   const unsigned char *oData,
+Dialog_NoiseInfo::Dialog_NoiseInfo(packet *cData,
+                                   const packet *oData,
                                    int size,
                                    QWidget *parent) :
     QDialog(parent),

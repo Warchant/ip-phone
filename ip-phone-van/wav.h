@@ -20,6 +20,7 @@
 #include <QDebug>
 #include <QFile>
 
+typedef int packet;
 
 class WAV
 {
@@ -43,10 +44,10 @@ public:
      * @brief Getter for p_header
      */
     const std::map<std::string, std::string> getHeader() const;
-    const unsigned char *getOriginalData() const;
+    const packet *getOriginalData() const;
 
-    unsigned char *data;
-
+    packet *data;
+    unsigned char * bytedata;
     void convert2data(QVector<double> y);
 
     int getHeaderSize();
@@ -55,8 +56,8 @@ private:
 
     std::string clearName(const char *a, int size);
 
-    const int header_size;
-    unsigned char *original_data;
+    int header_size;
+    packet *original_data;
     void fillHeaderData();
 
     std::map <std::string, std::string> header_data;

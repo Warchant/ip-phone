@@ -3,34 +3,29 @@
 
 
 #include <vector>
-
-#define PLACEHOLDER 1
-
-
-typedef unsigned char * packet;
-
+#include "functions.h"
 
 class Packets
 {
 public:
 
     Packets();
-    Packets(packet data, int size);
+    Packets(packet * data, int size);
 
     ~Packets();
 
     void createPackets(int length);
     void deletePacket(int number);
-    void replacePacket(int number, packet pk);
+    void replacePacket(int number, packet * pk);
     bool isDeleted(int number);
-    packet getPacket(int number);
+    packet * getPacket(int number);
 
     int getPacketLength() const;
-    void setData(packet data);
+    void setData(packet * data);
 
-    packet data;
+    packet * data;
 
-    packet data_del;
+    packet * data_del;
 
 private:
 

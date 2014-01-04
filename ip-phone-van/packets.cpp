@@ -3,7 +3,7 @@
 
 Packets::Packets()
 { 
-    this->data_del = new unsigned char[1];
+    this->data_del = new packet[1];
 }
 
 Packets::~Packets()
@@ -11,12 +11,12 @@ Packets::~Packets()
     delete [] data_del;
 }
 
-Packets::Packets(packet data, int size)
+Packets::Packets(packet *data, int size)
 {
     this->data = data;
     this->size = size; // size in bytes
 
-    this->data_del = new unsigned char [size];
+    this->data_del = new packet[size];
 }
 
 
@@ -36,7 +36,7 @@ void Packets::deletePacket(int number)
 }
 
 
-void Packets::replacePacket(int number, packet pk)
+void Packets::replacePacket(int number, packet *pk)
 {
     for(int i=0; i<this->packet_length; i++)
     {
@@ -59,9 +59,9 @@ bool Packets::isDeleted(int number)
 }
 
 
-packet Packets::getPacket(int number)
+packet * Packets::getPacket(int number)
 {
-    unsigned char * p = new unsigned char[packet_length];
+    packet * p = new packet [packet_length];
 
     for(int i=0;i < packet_length; i++)
     {

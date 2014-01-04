@@ -32,7 +32,7 @@ private:
 
     Ui::Dialog_PacketDelete *ui;
 
-    const int m_length;
+    int m_length;
 };
 
 #endif // DIALOG_PACKETDELETE_H

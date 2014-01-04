@@ -1,8 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#define PLACEHOLDER 1
-#define STOP_SYMBOL 0
+int PLACEHOLDER = SHRT_MIN;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -30,14 +29,11 @@ MainWindow::~MainWindow()
 void MainWindow::plotSetup()
 {
     std::map <std::string, std::string> wav = file->wav_header->getHeader();
-    int     bps = wav.empty()?0: str2int(wav["bitsPerSample"]);
-            bps = bps !=8 && bps !=16 ? 8 : bps;
+    int     bps = str2int(wav["bitsPerSample"]);
     int    size = str2int(wav["subChunk2Size"]);
     double time = 1.* size / bps;
-    int     min = 255;
-    int     max = 0;
-
-    bps = bps !=8 && bps !=16 ? 8 : bps;
+    int     min = INT_MAX;
+    int     max = INT_MIN;
 
     const QCPDataMap *dataMap = ui->customPlot->graph(0)->data();
     QVector <double> y;
@@ -49,9 +45,11 @@ void MainWindow::plotSetup()
 
     for(int i=0; i<y.size(); i++)
     {
-        min = min > y.at(i) ? y.at(i) : min;
+        min = min > y.at(i) && y.at(i)!=PLACEHOLDER ? y.at(i) : min;
         max = max < y.at(i) ? y.at(i) : max;
     }
+
+    PLACEHOLDER = bps == 8 ? 1 : SHRT_MIN;
 
     // Set ranges to top and bottom axis
     ui->customPlot->yAxis->setRange(min, max);
@@ -77,31 +75,21 @@ void MainWindow::plotReplot(std::vector <int> index_ignore)
 {
     std::map <std::string, std::string> wav = file->wav_header->getHeader();
     int     bps = wav.empty()?0: str2int(wav["bitsPerSample"]);
-            bps = bps !=8 && bps !=16 ? 8 : bps;
     int    size = wav.empty()?0: str2int(wav["subChunk2Size"]);
     double time = double(size) / bps;
 
-    unsigned char * data = file->wav_header->data;
-
-    size = bps == 16 ? size/2 : size;
+    packet * data = file->wav_header->data;
 
     QVector<double> x(size), y(size);
     for (int i=0; i<size; i++)
     {
         x[i] = time*(double(i)/(size-1));
-        if(bps==16)
-        {
-            y[i] = double(twoCharToInt(data[2*i+1],data[2*i]));
-        }
-        else
-        {
-            y[i] = double(data[i]);
-        }
+        y[i] = double(data[i]);
     }
 
     if(!index_ignore.empty())
     {
-        for (unsigned int i=0; i<index_ignore.size()/2;i++ )
+        for (unsigned int i=0; i<index_ignore.size();i++ )
         {
             for(int j=0; j<this->packetLength; j++)
             {
@@ -163,15 +151,6 @@ bool MainWindow::saveFile(QString path)
     }
     f.close();
     return true;
-}
-
-
-int MainWindow::twoCharToInt(char a, char b)
-{
-    int i = *(signed char *)(&a);
-    i *= 1 << CHAR_BIT;
-    i |= b;
-    return i;
 }
 
 
@@ -262,19 +241,24 @@ void MainWindow::on_action_info_triggered()
 
 void MainWindow::on_action_packetDelete_triggered()
 {
+    std::map<std::string,std::string> wav = file->wav_header->getHeader();
+
+    if(wav.empty())
+        return;
+
     Dialog_PacketDelete *dpd = new Dialog_PacketDelete(sizeinbytes,this);
 
     if(dpd->exec()) //show dialog
     {
         this->packetLength = dpd->packet_length;
-        int size           = sizeinbytes/this->packetLength;   // size of new array: data divided into packets
+        int packets_amount = sizeinbytes/this->packetLength;   // size of new array: data divided into packets
 
-        algorithms->setPacketsAmount(size);
+        algorithms->setPacketsAmount(packets_amount);
         algorithms->container->createPackets(this->packetLength); // create packets from bytes
 
         if(dpd->to_delete > 0)
         {
-            del_index = randVector(1,size,dpd->to_delete);
+            del_index = randVector(1,packets_amount,dpd->to_delete);
             this->plotReplot(del_index);
             const QCPDataMap *dataMap = ui->customPlot->graph(0)->data();
             QVector <double> y;
@@ -295,7 +279,7 @@ void MainWindow::on_action_packetDelete_triggered()
     delete dpd;
 
     // backup data with deleted packets
-    memcpy(algorithms->container->data_del,algorithms->container->data,sizeinbytes);
+    memcpy(algorithms->container->data_del,algorithms->container->data,sizeof(packet) * sizeinbytes);
 }
 
 
@@ -343,13 +327,13 @@ void MainWindow::on_action_stop_triggered()
 
 void MainWindow::on_action_packetRecover_triggered()
 {
+    std::map<std::string,std::string> wav = file->wav_header->getHeader();
+
+    if(wav.empty())
+        return;
+
     if(this->packetLength == 0)
     {
-        std::map<std::string,std::string> wav = file->wav_header->getHeader();
-
-        if(wav.empty())
-            return;
-
         this->sizeinbytes = str2int(wav["subChunk2Size"]);
 
         // calculate packet length
@@ -375,7 +359,6 @@ void MainWindow::on_action_packetRecover_triggered()
                                    [](int el){return el<=1;}
         ), lengths.end());
 
-        std::for_each(lengths.begin(),lengths.end(),[&](int el){printf("%i\t",el);});
         this->packetLength = *std::min_element(lengths.begin(),lengths.end());
         this->packetLength = this->packetLength == 0 ? 1 : this->packetLength;
 
@@ -390,9 +373,9 @@ void MainWindow::on_action_packetRecover_triggered()
         switch(dpr->getAlgorithm())
         {
             case 1:
-                memcpy(file->wav_header->data,file->wav_header->getOriginalData(),sizeinbytes); break;
+                memcpy(file->wav_header->data, file->wav_header->getOriginalData(),sizeof(packet) * sizeinbytes); break;
             case 0:
-                memcpy(algorithms->container->data,algorithms->container->data_del,sizeinbytes); break;
+                memcpy(algorithms->container->data,algorithms->container->data_del,sizeof(packet) * sizeinbytes); break;
             case 2:
                 algorithms->splicing(); break;
             case 3:

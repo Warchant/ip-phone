@@ -25,7 +25,7 @@ void RepairAlgorithm::setSizeInBytes(int sib)
 }
 
 
-void RepairAlgorithm::setData(unsigned char * d)
+void RepairAlgorithm::setData(packet * d)
 {
     delete this->container;
     this->container = new Packets(d, this->sizeinbytes);
@@ -146,7 +146,7 @@ void RepairAlgorithm::noiseSubstitution()
         {
             last_correct = i;
 
-            // calculate mean and max
+            // calculate mean and variance
             mean = 0;
             for(int j=0;j<packet_length;j++)
             {
@@ -164,16 +164,21 @@ void RepairAlgorithm::noiseSubstitution()
             }
             variance /= (packet_length - 1);
             variance  = pow(variance, 0.5);
+
         }
         else
         {
             // generate randn noise
             std::default_random_engine generator;
             std::normal_distribution<double> randn(mean, variance/2);
+
+            int min = PLACEHOLDER==SHRT_MIN ? SHRT_MIN : 2;
+            int max = PLACEHOLDER==SHRT_MIN ? SHRT_MAX : UCHAR_MAX;
+
             for(int j=0; j<packet_length; j++)
             {
                 int randn_number = randn(generator);
-                container->data[i*packet_length + j] = randn_number >= 2 && randn_number <=255 ?
+                container->data[i*packet_length + j] = randn_number >= min && randn_number <=max ?
                             randn_number : mean;
             }
         }
@@ -237,9 +242,9 @@ void RepairAlgorithm::timeScaleModification()
             else
             {
                 // split into 2 parts left and right packets, then concatenate them
-                packet conc         = new unsigned char [packet_length + 1];
-                const packet pleft  = container->getPacket(left);
-                const packet pright = container->getPacket(i+offset);
+                packet *conc         = new packet [packet_length + 1];
+                const packet *pleft  = container->getPacket(left);
+                const packet *pright = container->getPacket(i+offset);
                 for(int j=0; j<packet_length + 1; j++)
                 {
                     // fill conc packet
@@ -251,7 +256,7 @@ void RepairAlgorithm::timeScaleModification()
                 delete [] pright;
 
                 // we need to scale conc packet to size = packet_length*right
-                packet ins = new unsigned char [packet_length * offset];
+                packet *ins = new packet [packet_length * offset];
                 if(offset == 1)
                 {
                     // one deleted packet in a row
@@ -273,13 +278,12 @@ void RepairAlgorithm::timeScaleModification()
                 }
 
                 // replace deletion by ins
-                memcpy(container->data + i*packet_length, ins, sizeof(unsigned char)*offset*packet_length);
+                memcpy(container->data + i*packet_length, ins, sizeof(packet)*offset*packet_length);
                 delete [] conc;
                 delete [] ins;
             }
         }
     }
-
 }
 
 

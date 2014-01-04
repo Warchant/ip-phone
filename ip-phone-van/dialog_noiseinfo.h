@@ -3,6 +3,8 @@
 
 #include <QDialog>
 
+#include "functions.h"
+
 namespace Ui {
 class Dialog_NoiseInfo;
 }
@@ -12,8 +14,8 @@ class Dialog_NoiseInfo : public QDialog
     Q_OBJECT
     
 public:
-    Dialog_NoiseInfo(unsigned char *cData,
-                     const unsigned char *oData,
+    Dialog_NoiseInfo(packet *cData,
+                     const packet *oData,
                      int size,
                      QWidget *parent = 0);
     ~Dialog_NoiseInfo();
@@ -44,8 +46,8 @@ private:
     double snr;
 
     int size;
-    unsigned char * currentData;
-    const unsigned char * originalData;
+    packet * currentData;
+    const packet * originalData;
 };
 
 #endif // DIALOG_NOISEINFO_H

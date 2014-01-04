@@ -36,8 +36,8 @@ void AudioIO::setPath(const QString &value)
 
     std::map<std::string,std::string> wav = wav_header->getHeader();
 
-    int bps = str2int(wav["bitsPerSample"]);
     // Set up the format, eg.
+    int bps = str2int(wav["bitsPerSample"]) ;
     format.setSampleRate  ( str2int(wav["sampleRate"]) );
     format.setChannelCount( str2int(wav["numChannels"]) );
     format.setSampleSize  ( bps );
@@ -68,7 +68,8 @@ void AudioIO::pausePlayback(){
 
 void AudioIO::startPlayback(){
     delete this->buffer;
-    this->buffer = new QBuffer(new QByteArray((const char *)this->wav_header->data));
+    QByteArray *barr = new QByteArray((const char *)this->wav_header->bytedata);
+    this->buffer = new QBuffer(barr);
 
     if(!buffer->isOpen())
         buffer->open(QIODevice::ReadOnly);
