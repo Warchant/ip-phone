@@ -91,7 +91,6 @@ double Dialog_NoiseInfo::calcSnr()
     double den = 0;
     for(int i=0; i<size; i++)
     {
-        // sum(C * S) / sum(C)
         // C => originalData
         // S => currentData
         int C = (originalData[i]==0?1:originalData[i]);
